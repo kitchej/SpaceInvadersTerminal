@@ -4,15 +4,14 @@ namespace SimpleGameEngine{
         int _columnCount;
         char[,] screen;
         char _background;
-        List<Sprite> _sprites;
-        bool ExitFlag {get; set;}
+        public List<Sprite> Sprites {get;}
 
         public Display(int rowCount, int columnCount, char background=' '){
             _rowCount = rowCount;
             _columnCount = columnCount;
             _background = background;
             screen = new char[_rowCount, _columnCount];
-            _sprites = new List<Sprite>();
+            Sprites = new List<Sprite>();
             for (int i=0;i<_rowCount;i++){
                 for (int j=0;j<_columnCount;j++){
                     screen[i,j] = _background;
@@ -21,8 +20,13 @@ namespace SimpleGameEngine{
         }
 
         void RefreshSprites(){
-            foreach(var sprite in _sprites){
-                DrawSprite(sprite);
+            foreach(var sprite in Sprites){
+                try{
+                    DrawSprite(sprite);
+                }
+                catch(IndexOutOfRangeException){
+                    continue;
+                }
             }
         }
 
@@ -51,11 +55,11 @@ namespace SimpleGameEngine{
         }
         
         public void AddSprite(Sprite sprite){
-            _sprites.Add(sprite);
+            Sprites.Add(sprite);
         }
 
         public void DeleteSprite(Sprite sprite){
-            _sprites.Remove(sprite);
+            Sprites.Remove(sprite);
         }
 
         public void Show(){

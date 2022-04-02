@@ -11,16 +11,30 @@ namespace SimpleGameEngine{
             Character = character;
         }
     }
-    class Sprite{
-        public List<Pixel> Coords {get;}
-        int _stackOrder;
-        public string SpriteId {get; set;}
 
-        public Sprite(string file, int startx, int starty, int stackOrder, string spriteId){
+    struct CollisionInfo{
+        public bool CollisionOccured;
+        public Sprite? Entity;
+    }
+
+    class Sprite{
+
+        protected List<Pixel> _coords;
+        protected string _spriteId;
+        protected bool _hasCollisons;
+        protected int _stackOrder;
+
+        public List<Pixel> Coords {get {return _coords;}}
+        public string SpriteId {get{return _spriteId;}}
+        public bool HasCollisons {get {return _hasCollisons;} set{_hasCollisons = value;}}
+        public int StackOrder {get {return _stackOrder;} set{_stackOrder = value;}}
+
+        public Sprite(string file, int startx, int starty, string spriteId, int stackOrder=0, bool collisions=true){
             int x;
-            SpriteId = spriteId;
+            _spriteId = spriteId;
             _stackOrder = stackOrder;
-            Coords = new List<Pixel>();
+            _coords = new List<Pixel>();
+            _hasCollisons = collisions;
             int whiteSpace;
             string row;
             foreach(var line in File.ReadLines(file)){
@@ -31,7 +45,7 @@ namespace SimpleGameEngine{
                 row = line.Trim();
                 x += whiteSpace;
                 foreach(var c in row){
-                    Coords.Add(new Pixel(x, starty, c));
+                    _coords.Add(new Pixel(x, starty, c));
                     x ++;
                 }
                 starty ++;
@@ -53,36 +67,101 @@ namespace SimpleGameEngine{
     }
 
     class Pawn: Sprite{
-        public Pawn(string file, int startx, int starty, int stackOrder, string spriteId): 
-        base(file, startx, starty, stackOrder, spriteId){}
+        Display _display;
+        CollisionInfo _collisionsInfo;
+        public Pawn(string file, int startx, int starty, string spriteId, Display display, int stackOrder=0, bool collisions=true): 
+        base(file, startx, starty, spriteId, stackOrder){
+            _display = display;
+        }
 
-        public void MoveNorth(int distnace){
-            for (int i=0; i<Coords.Count; i++){
-                Pixel c = Coords[i];
+        CollisionInfo CheckCollisions(){
+            CollisionInfo output = new CollisionInfo();
+            foreach(var sprite in _display.Sprites){
+                if (sprite == this){
+                    continue;
+                }
+                if (!sprite.HasCollisons){
+                    continue;
+                }
+                foreach (var otherCoord in sprite.Coords){
+                    foreach(var coord in _coords){
+                        
+                        if (otherCoord.X == coord.X && otherCoord.Y == coord.Y){
+                            output.CollisionOccured = true;
+                            output.Entity = sprite;
+                            return output;
+                        }
+                    }
+                }
+            }
+            output.CollisionOccured = false;
+            output.Entity = null;
+            return output;
+        }
+
+        public CollisionInfo MoveNorth(int distnace){
+            for (int i=0; i<_coords.Count; i++){
+                Pixel c = _coords[i];
                 c.Y -= distnace;
-                Coords[i] = c;
+                _coords[i] = c;
             }
-        }
-        public void MoveSouth(int distnace){
-            for (int i=0; i<Coords.Count; i++){
-                Pixel c = Coords[i];
+            _collisionsInfo = CheckCollisions();
+            if (_collisionsInfo.CollisionOccured){
+                for (int i=0; i<_coords.Count; i++){
+                Pixel c = _coords[i];
                 c.Y += distnace;
-                Coords[i] = c;
+                _coords[i] = c;
+                }
             }
+            return _collisionsInfo;
         }
-        public void MoveWest(int distnace){
-            for (int i=0; i<Coords.Count; i++){
-                Pixel c = Coords[i];
+        public CollisionInfo MoveSouth(int distnace){
+            for (int i=0; i<_coords.Count; i++){
+                Pixel c = _coords[i];
+                c.Y += distnace;
+                _coords[i] = c;
+            }
+             _collisionsInfo = CheckCollisions();
+            if (_collisionsInfo.CollisionOccured){
+                for (int i=0; i<_coords.Count; i++){
+                Pixel c = _coords[i];
+                c.Y -= distnace;
+                _coords[i] = c;
+                }
+            }
+            return _collisionsInfo;
+        }
+        public CollisionInfo MoveWest(int distnace){
+            for (int i=0; i<_coords.Count; i++){
+                Pixel c = _coords[i];
                 c.X -= distnace;
-                Coords[i] = c;
+                _coords[i] = c;
             }
-        }
-        public void MoveEast(int distnace){
-            for (int i=0; i<Coords.Count; i++){
-                Pixel c = Coords[i];
+             _collisionsInfo = CheckCollisions();
+            if (_collisionsInfo.CollisionOccured){
+                for (int i=0; i<_coords.Count; i++){
+                Pixel c = _coords[i];
                 c.X += distnace;
-                Coords[i] = c;
+                _coords[i] = c;
+                }
             }
+            return _collisionsInfo;
+        }
+        public CollisionInfo MoveEast(int distnace){
+            for (int i=0; i<_coords.Count; i++){
+                Pixel c = _coords[i];
+                c.X += distnace;
+                _coords[i] = c;
+            }
+             _collisionsInfo = CheckCollisions();
+            if (_collisionsInfo.CollisionOccured){
+               for (int i=0; i<_coords.Count; i++){
+                Pixel c = _coords[i];
+                c.X -= distnace;
+                _coords[i] = c;
+                }
+            }
+            return _collisionsInfo;
         }
     }
 }
