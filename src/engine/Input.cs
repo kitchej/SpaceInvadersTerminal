@@ -1,9 +1,9 @@
 namespace SimpleGameEngine{
 
     abstract class SpriteAction{
-        protected Pawn _sprite;
+        public Pawn Sprite {get; set;}
         public SpriteAction(Pawn sprite){
-            _sprite = sprite;
+            Sprite = sprite;
         }
 
         abstract public void ExecuteAction();
@@ -15,20 +15,20 @@ namespace SimpleGameEngine{
         ConsoleKey _exitKey;
         ConsoleKey _readKey;
         SpriteAction? _actionToExecute;
-        Dictionary<ConsoleKey, SpriteAction> bindings;
+        Dictionary<ConsoleKey, SpriteAction> _bindings;
 
         public Input(ConsoleKey exitKey){
             _exitKey = exitKey;
             _actionToExecute = null;
-            bindings = new Dictionary<ConsoleKey, SpriteAction>();
+            _bindings = new Dictionary<ConsoleKey, SpriteAction>();
         }
 
         public void BindAction(ConsoleKey key, SpriteAction action){
-            bindings.Add(key, action);
+            _bindings.Add(key, action);
         }
 
         public void UnbindAction(ConsoleKey key){
-            bindings.Remove(key);
+            _bindings.Remove(key);
         }
 
         public void Listen(){
@@ -39,7 +39,7 @@ namespace SimpleGameEngine{
                     break;
                 }
                 try{
-                    bindings.TryGetValue(_readKey, out _actionToExecute);
+                    _bindings.TryGetValue(_readKey, out _actionToExecute);
                     if (_actionToExecute == null){
                         continue;
                     }

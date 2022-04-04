@@ -7,7 +7,7 @@ namespace spaceInvaders{
         public MoveWest(Pawn sprite): base(sprite){}
 
         public override void ExecuteAction(){
-            _sprite.MoveWest(1);
+            Sprite.MoveWest(1);
         }
     }
 
@@ -15,7 +15,7 @@ namespace spaceInvaders{
         public MoveEast(Pawn sprite): base(sprite){}
 
         public override void ExecuteAction(){
-            _sprite.MoveEast(1);
+            Sprite.MoveEast(1);
         }
     }
 
@@ -23,7 +23,7 @@ namespace spaceInvaders{
         public MoveNorth(Pawn sprite): base(sprite){}
 
         public override void ExecuteAction(){
-            _sprite.MoveNorth(1);
+            Sprite.MoveNorth(1);
         }
     }
 
@@ -31,7 +31,7 @@ namespace spaceInvaders{
         public MoveSouth(Pawn sprite): base(sprite){}
 
         public override void ExecuteAction(){
-            _sprite.MoveSouth(1);
+            Sprite.MoveSouth(1);
         }
     }
 
@@ -41,7 +41,7 @@ namespace spaceInvaders{
             _spawner = spawner;
         }
         public override void ExecuteAction(){
-            _spawner.SpwawnSprite(_sprite.Coords[0].X, _sprite.Coords[0].Y - 1);
+            _spawner.SpwawnSprite(Sprite.Coords[0].X, Sprite.Coords[0].Y - 1);
         }
     }
 
@@ -84,10 +84,11 @@ namespace spaceInvaders{
             Sprite southBounds = new Sprite(@"src\sprites\horizBorder.txt", 1, 24, "southBounds");
             Sprite westBounds = new Sprite(@"src\sprites\vertiBorder.txt", 0, 1, "westBounds");
             Sprite eastBounds = new Sprite(@"src\sprites\vertiBorder.txt", 59, 1, "eastBounds");
-            Pawn ship = new Pawn(@"src\sprites\ship.txt", startx: 30, starty: 20, spriteId: "ship", display: screen);
+            Pawn ship = new Pawn(@"src\sprites\ship.txt", startx: 30, starty: 20, spriteId: "ship", display: screen, stackOrder: 0);
             Pawn enemyShip = new Pawn(@"src\sprites\alien1.txt", startx: 30, starty: 12, spriteId: "enemyShip", display: screen);
+            Pawn enemyShip2 = new Pawn(@"src\sprites\alien1.txt", startx: 20, starty: 12, spriteId: "enemyShip", display: screen, stackOrder: 0, collisions: false);
             EnemyContoller enemyAi = new EnemyContoller(enemyShip, screen, 500);
-            Spawner spawner = new Spawner(typeof(Pawn), new object[] { @"src\sprites\projectile.txt", 30, 21, "projectile", screen, 0, true}, 
+            Spawner spawner = new Spawner(typeof(Pawn), new object[] { @"src\sprites\projectile.txt", 30, 21, "projectile", screen, 1, true}, 
                                           typeof(ProjectileContoller), new object?[] {null, screen, 50}, 
                                           screen);
             screen.AddSprite(ship);
@@ -96,6 +97,7 @@ namespace spaceInvaders{
             screen.AddSprite(westBounds);
             screen.AddSprite(eastBounds);
             screen.AddSprite(enemyShip);
+            screen.AddSprite(enemyShip2);
             Input input = new Input(exitKey: ConsoleKey.Q);
             input.BindAction(ConsoleKey.A, new MoveWest(ship));
             input.BindAction(ConsoleKey.D, new MoveEast(ship));

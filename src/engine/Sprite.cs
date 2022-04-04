@@ -65,36 +65,41 @@ namespace SimpleGameEngine{
             return whiteSpaceCount;
         }
 
+        public static int CompareByStackOrder(Sprite sprite1, Sprite sprite2){
+            return sprite1.StackOrder.CompareTo(sprite2.StackOrder);
+        }
+
         public void MoveTo(int x, int y){
             int xTransform;
             int yTransform;
+            lock(_coords){
+                if (x < _coords[0].X){
+                xTransform = (_coords[0].X - x) * - 1;
+                }
+                else if(x == _coords[0].X){
+                    xTransform = 0;
+                }
+                else{
+                    xTransform = x - _coords[0].X;
+                }
 
-            if (x < Coords[0].X){
-                xTransform = (Coords[0].X - x) * - 1;
-            }
-            else if(x == Coords[0].X){
-                xTransform = 0;
-            }
-            else{
-                xTransform = x - Coords[0].X;
-            }
+                if (y < _coords[0].X){
+                    yTransform = (_coords[0].Y - y) * - 1;
+                }
+                else if(y == _coords[0].Y){
+                    yTransform = 0;
+                }
+                else{
+                    yTransform = y - _coords[0].Y;
+                }
 
-            if (y < Coords[0].X){
-                yTransform = (Coords[0].Y - y) * - 1;
-            }
-            else if(y == Coords[0].Y){
-                yTransform = 0;
-            }
-            else{
-                yTransform = y - Coords[0].Y;
-            }
-
-            for (int i=0; i<_coords.Count; i++){
-                Pixel c = _coords[i];
-                c.X += xTransform;
-                c.Y += yTransform;
-                _coords[i] = c;
-            }
+                for (int i=0; i<_coords.Count; i++){
+                    Pixel c = _coords[i];
+                    c.X += xTransform;
+                    c.Y += yTransform;
+                    _coords[i] = c;
+                }
+            }      
         }
     }
 
@@ -102,7 +107,7 @@ namespace SimpleGameEngine{
         Display _display;
         CollisionInfo _collisionsInfo;
         public Pawn(string file, int startx, int starty, string spriteId, Display display, int stackOrder=0, bool collisions=true): 
-        base(file, startx, starty, spriteId, stackOrder){
+        base(file, startx, starty, spriteId, stackOrder, collisions){
             _display = display;
         }
 
@@ -110,27 +115,24 @@ namespace SimpleGameEngine{
             CollisionInfo output = new CollisionInfo();
             lock (_display.Sprites){
                 foreach(var sprite in _display.Sprites){
-                if (sprite == this){
-                    continue;
-                }
-                if (!sprite.HasCollisons){
-                    continue;
-                }
-                lock(sprite.Coords){
-                    foreach (var otherCoord in sprite.Coords){
-                        foreach(var coord in _coords){
-                            
-                            if (otherCoord.X == coord.X && otherCoord.Y == coord.Y){
-                                output.CollisionOccured = true;
-                                output.Entity = sprite;
-                                return output;
+                    if (sprite == this){
+                        continue;
+                    }
+                    if (!sprite.HasCollisons){
+                        continue;
+                    }
+                    lock(sprite.Coords){
+                        foreach (var otherCoord in sprite.Coords){
+                            foreach(var coord in _coords){
+                                if (otherCoord.X == coord.X && otherCoord.Y == coord.Y){
+                                    output.CollisionOccured = true;
+                                    output.Entity = sprite;
+                                    return output;
+                                }
                             }
                         }
                     }
                 }
-                
-            }
-            
             }
             output.CollisionOccured = false;
             output.Entity = null;
@@ -140,9 +142,9 @@ namespace SimpleGameEngine{
         public CollisionInfo MoveNorth(int distnace){
             lock(_coords){
                 for (int i=0; i<_coords.Count; i++){
-                Pixel c = _coords[i];
-                c.Y -= distnace;
-                _coords[i] = c;
+                    Pixel c = _coords[i];
+                    c.Y -= distnace;
+                    _coords[i] = c;
                 }
             }
             

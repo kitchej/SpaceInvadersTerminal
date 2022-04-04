@@ -59,13 +59,14 @@ namespace SimpleGameEngine{
         public void AddSprite(Sprite sprite){
             lock (Sprites){
                 Sprites.Add(sprite); 
+                Sprites.Sort(Sprite.CompareByStackOrder);
             }
-            
         }
 
         public void DeleteSprite(Sprite sprite){
             lock (Sprites){
                 Sprites.Remove(sprite);
+                Sprites.Sort(Sprite.CompareByStackOrder);
             }
         }
 
