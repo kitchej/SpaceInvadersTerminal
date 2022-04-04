@@ -53,7 +53,6 @@ Spawning utilizes reflection, as such it is nesscary to include ```using System.
 ---
 ### **```class``` Display**
 
-
 Represents the main display of the game. There should only ever be one Display object per game. Sprites will be drawn to the screen automiaclly, provided ```Refresh()``` has been called. Sprites can be added and removed from the game through the ```AddSprite()``` and the ```RemoveSprite()``` methods. Though individual characters and Sprite objects can be drawn to the screen with ```Draw()```, ```DrawSprite()```, and displayed with ```Show()```, these changes will not show up in during the main game loop. These are methods used internally, but made public due to their usefulness for visualizing sprite positions on the screen outside of the main gameloop.
 
 #### **Properties**
