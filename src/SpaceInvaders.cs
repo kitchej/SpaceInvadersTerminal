@@ -1,4 +1,5 @@
 ﻿using SimpleGameEngine;
+using System.Reflection;
 
 namespace spaceInvaders{
     
@@ -34,6 +35,16 @@ namespace spaceInvaders{
         }
     }
 
+    class ShootProjectile: SpriteAction{
+        Spawner _spawner;
+        public ShootProjectile(Pawn sprite, Spawner spawner): base(sprite){
+            _spawner = spawner;
+        }
+        public override void ExecuteAction(){
+            _spawner.SpwawnSprite(_sprite.Coords[0].X, _sprite.Coords[0].Y + 1);
+        }
+    }
+
     class EnemyContoller: SpriteController{
         public EnemyContoller(Pawn sprite, Display display, int speed): base(sprite, display, speed){}
 
@@ -47,6 +58,24 @@ namespace spaceInvaders{
             _sprite.MoveWest(1);
         }
     }
+
+    class ProjectileContoller: SpriteController{
+        CollisionInfo collisionInfo;
+        public ProjectileContoller(Pawn? sprite, Display display, int speed): base(sprite, display, speed){}
+
+        protected override void Behavior(){
+           collisionInfo = _sprite.MoveNorth(1);
+        }
+
+        protected override bool CheckDespawnConditions()
+        {
+            if (collisionInfo.CollisionOccured){
+                return true;
+            }
+            return false;
+        }
+
+    }
     static class Program{
         static void Main(){
             Display screen = new Display(25, 60);
@@ -57,6 +86,9 @@ namespace spaceInvaders{
             Pawn ship = new Pawn(@"src\sprites\ship.txt", startx: 30, starty: 20, spriteId: "ship", display: screen);
             Pawn enemyShip = new Pawn(@"src\sprites\alien1.txt", startx: 30, starty: 12, spriteId: "enemyShip", display: screen);
             EnemyContoller enemyAi = new EnemyContoller(enemyShip, screen, 500);
+            Spawner spawner = new Spawner(typeof(Pawn), new object[] {@"src\sprites\projectile.txt", 30, 21, "projectile", screen, 0, true}, 
+                                          typeof(ProjectileContoller), new object?[] {null, screen, 500}, 
+                                          screen);
             screen.AddSprite(ship);
             screen.AddSprite(northBounds);
             screen.AddSprite(southBounds);
@@ -68,8 +100,11 @@ namespace spaceInvaders{
             input.BindAction(ConsoleKey.D, new MoveEast(ship));
             input.BindAction(ConsoleKey.W, new MoveNorth(ship));
             input.BindAction(ConsoleKey.S, new MoveSouth(ship));
+            input.BindAction(ConsoleKey.Spacebar, new ShootProjectile(ship, spawner));
             
             Mainloop.mainloop(screen, input, new SpriteController[] {enemyAi});
+            
+            
         }
     }
 }

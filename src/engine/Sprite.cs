@@ -64,6 +64,38 @@ namespace SimpleGameEngine{
             } 
             return whiteSpaceCount;
         }
+
+        public void MoveTo(int x, int y){
+            int xTransform;
+            int yTransform;
+
+            if (x < Coords[0].X){
+                xTransform = (Coords[0].X - x) * - 1;
+            }
+            else if(x == Coords[0].X){
+                xTransform = 0;
+            }
+            else{
+                xTransform = x - Coords[0].X;
+            }
+
+            if (y < Coords[0].X){
+                yTransform = (Coords[0].Y - y) * - 1;
+            }
+            else if(y == Coords[0].Y){
+                yTransform = 0;
+            }
+            else{
+                yTransform = y - Coords[0].Y;
+            }
+
+            for (int i=0; i<_coords.Count; i++){
+                Pixel c = _coords[i];
+                c.X += xTransform;
+                c.Y += yTransform;
+                _coords[i] = c;
+            }
+        }
     }
 
     class Pawn: Sprite{
