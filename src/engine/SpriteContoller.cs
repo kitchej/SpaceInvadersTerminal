@@ -3,7 +3,6 @@ namespace SimpleGameEngine{
 
         protected Display _display;
         protected Pawn? _sprite;
-        public Pawn? Sprite {set {_sprite = value;}}
         protected int _speed;
 
         public SpriteController(Pawn? sprite, Display display, int speed){

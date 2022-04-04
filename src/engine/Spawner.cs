@@ -49,9 +49,8 @@ namespace SimpleGameEngine{
             }
         }
 
-        // TODO: Spawned sprite does not show up
         public void SpwawnSprite(int startx, int starty){
-            var newSprite = _spriteConstuctor.Invoke(_spriteAttr) as Sprite;
+            var newSprite = _spriteConstuctor.Invoke(_spriteAttr) as Pawn;
             _spriteControllerAttr[0] = newSprite;
             newSprite.MoveTo(startx, starty);
             var newController = _spriteControllerConstructor.Invoke(_spriteControllerAttr) as SpriteController;

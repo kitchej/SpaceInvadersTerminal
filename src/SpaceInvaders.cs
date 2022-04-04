@@ -41,7 +41,7 @@ namespace spaceInvaders{
             _spawner = spawner;
         }
         public override void ExecuteAction(){
-            _spawner.SpwawnSprite(_sprite.Coords[0].X, _sprite.Coords[0].Y + 1);
+            _spawner.SpwawnSprite(_sprite.Coords[0].X, _sprite.Coords[0].Y - 1);
         }
     }
 
@@ -77,8 +77,9 @@ namespace spaceInvaders{
 
     }
     static class Program{
+
         static void Main(){
-            Display screen = new Display(25, 60);
+         Display screen = new Display(25, 60);
             Sprite northBounds = new Sprite(@"src\sprites\horizBorder.txt", 1, 0, "northBounds");
             Sprite southBounds = new Sprite(@"src\sprites\horizBorder.txt", 1, 24, "southBounds");
             Sprite westBounds = new Sprite(@"src\sprites\vertiBorder.txt", 0, 1, "westBounds");
@@ -86,8 +87,8 @@ namespace spaceInvaders{
             Pawn ship = new Pawn(@"src\sprites\ship.txt", startx: 30, starty: 20, spriteId: "ship", display: screen);
             Pawn enemyShip = new Pawn(@"src\sprites\alien1.txt", startx: 30, starty: 12, spriteId: "enemyShip", display: screen);
             EnemyContoller enemyAi = new EnemyContoller(enemyShip, screen, 500);
-            Spawner spawner = new Spawner(typeof(Pawn), new object[] {@"src\sprites\projectile.txt", 30, 21, "projectile", screen, 0, true}, 
-                                          typeof(ProjectileContoller), new object?[] {null, screen, 500}, 
+            Spawner spawner = new Spawner(typeof(Pawn), new object[] { @"src\sprites\projectile.txt", 30, 21, "projectile", screen, 0, true}, 
+                                          typeof(ProjectileContoller), new object?[] {null, screen, 50}, 
                                           screen);
             screen.AddSprite(ship);
             screen.AddSprite(northBounds);
@@ -103,8 +104,6 @@ namespace spaceInvaders{
             input.BindAction(ConsoleKey.Spacebar, new ShootProjectile(ship, spawner));
             
             Mainloop.mainloop(screen, input, new SpriteController[] {enemyAi});
-            
-            
         }
     }
 }

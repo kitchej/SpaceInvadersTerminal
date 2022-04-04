@@ -26,8 +26,8 @@ namespace SimpleGameEngine{
 
         public List<Pixel> Coords {get {return _coords;}}
         public string SpriteId {get{return _spriteId;}}
-        public bool HasCollisons {get {return _hasCollisons;} set{_hasCollisons = value;}}
-        public int StackOrder {get {return _stackOrder;} set{_stackOrder = value;}}
+        public bool HasCollisons {get {return _hasCollisons;} set{_hasCollisons = value;}} // This may need to be locked if edited from other threads
+        public int StackOrder {get {return _stackOrder;} set{_stackOrder = value;}} // This may need to be locked if edited from other threads
 
         public Sprite(string file, int startx, int starty, string spriteId, int stackOrder=0, bool collisions=true){
             int x;
@@ -108,23 +108,29 @@ namespace SimpleGameEngine{
 
         CollisionInfo CheckCollisions(){
             CollisionInfo output = new CollisionInfo();
-            foreach(var sprite in _display.Sprites){
+            lock (_display.Sprites){
+                foreach(var sprite in _display.Sprites){
                 if (sprite == this){
                     continue;
                 }
                 if (!sprite.HasCollisons){
                     continue;
                 }
-                foreach (var otherCoord in sprite.Coords){
-                    foreach(var coord in _coords){
-                        
-                        if (otherCoord.X == coord.X && otherCoord.Y == coord.Y){
-                            output.CollisionOccured = true;
-                            output.Entity = sprite;
-                            return output;
+                lock(sprite.Coords){
+                    foreach (var otherCoord in sprite.Coords){
+                        foreach(var coord in _coords){
+                            
+                            if (otherCoord.X == coord.X && otherCoord.Y == coord.Y){
+                                output.CollisionOccured = true;
+                                output.Entity = sprite;
+                                return output;
+                            }
                         }
                     }
                 }
+                
+            }
+            
             }
             output.CollisionOccured = false;
             output.Entity = null;
@@ -132,66 +138,85 @@ namespace SimpleGameEngine{
         }
 
         public CollisionInfo MoveNorth(int distnace){
-            for (int i=0; i<_coords.Count; i++){
+            lock(_coords){
+                for (int i=0; i<_coords.Count; i++){
                 Pixel c = _coords[i];
                 c.Y -= distnace;
                 _coords[i] = c;
+                }
             }
+            
             _collisionsInfo = CheckCollisions();
             if (_collisionsInfo.CollisionOccured){
-                for (int i=0; i<_coords.Count; i++){
-                Pixel c = _coords[i];
-                c.Y += distnace;
-                _coords[i] = c;
+                lock(_coords){
+                    for (int i=0; i<_coords.Count; i++){
+                        Pixel c = _coords[i];
+                        c.Y += distnace;
+                        _coords[i] = c;
+                    }
                 }
+                
             }
             return _collisionsInfo;
         }
         public CollisionInfo MoveSouth(int distnace){
-            for (int i=0; i<_coords.Count; i++){
-                Pixel c = _coords[i];
-                c.Y += distnace;
-                _coords[i] = c;
+            lock(_coords){
+                for (int i=0; i<_coords.Count; i++){
+                    Pixel c = _coords[i];
+                    c.Y += distnace;
+                    _coords[i] = c;
+                }
             }
+            
              _collisionsInfo = CheckCollisions();
             if (_collisionsInfo.CollisionOccured){
-                for (int i=0; i<_coords.Count; i++){
-                Pixel c = _coords[i];
-                c.Y -= distnace;
-                _coords[i] = c;
+                lock(_coords){
+                    for (int i=0; i<_coords.Count; i++){
+                        Pixel c = _coords[i];
+                        c.Y -= distnace;
+                        _coords[i] = c;
+                    }
                 }
             }
             return _collisionsInfo;
         }
         public CollisionInfo MoveWest(int distnace){
-            for (int i=0; i<_coords.Count; i++){
-                Pixel c = _coords[i];
-                c.X -= distnace;
-                _coords[i] = c;
+            lock(_coords){
+                for (int i=0; i<_coords.Count; i++){
+                    Pixel c = _coords[i];
+                    c.X -= distnace;
+                    _coords[i] = c;
+                }
             }
              _collisionsInfo = CheckCollisions();
             if (_collisionsInfo.CollisionOccured){
-                for (int i=0; i<_coords.Count; i++){
-                Pixel c = _coords[i];
-                c.X += distnace;
-                _coords[i] = c;
+                lock (_coords){
+                    for (int i=0; i<_coords.Count; i++){
+                    Pixel c = _coords[i];
+                    c.X += distnace;
+                    _coords[i] = c;
+                    }
                 }
             }
             return _collisionsInfo;
         }
         public CollisionInfo MoveEast(int distnace){
-            for (int i=0; i<_coords.Count; i++){
-                Pixel c = _coords[i];
-                c.X += distnace;
-                _coords[i] = c;
+            lock (_coords){
+                for (int i=0; i<_coords.Count; i++){
+                    Pixel c = _coords[i];
+                    c.X += distnace;
+                    _coords[i] = c;
+                }
             }
              _collisionsInfo = CheckCollisions();
             if (_collisionsInfo.CollisionOccured){
-               for (int i=0; i<_coords.Count; i++){
-                Pixel c = _coords[i];
-                c.X -= distnace;
-                _coords[i] = c;
-                }
+               lock(_coords){
+                   for (int i=0; i<_coords.Count; i++){
+                        Pixel c = _coords[i];
+                        c.X -= distnace;
+                        _coords[i] = c;
+                    }
+               }
             }
             return _collisionsInfo;
         }

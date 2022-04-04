@@ -20,14 +20,16 @@ namespace SimpleGameEngine{
         }
 
         void RefreshSprites(){
-            foreach(var sprite in Sprites){
-                try{
-                    DrawSprite(sprite);
+            lock(Sprites){
+                foreach(var sprite in Sprites){
+                    try{
+                        DrawSprite(sprite);
+                    }
+                    catch(IndexOutOfRangeException){
+                        continue;
+                    }
                 }
-                catch(IndexOutOfRangeException){
-                    continue;
-                }
-            }
+            }     
         }
 
         public void Draw(int x, int y, char character){
@@ -55,11 +57,16 @@ namespace SimpleGameEngine{
         }
         
         public void AddSprite(Sprite sprite){
-            Sprites.Add(sprite);
+            lock (Sprites){
+                Sprites.Add(sprite); 
+            }
+            
         }
 
         public void DeleteSprite(Sprite sprite){
-            Sprites.Remove(sprite);
+            lock (Sprites){
+                Sprites.Remove(sprite);
+            }
         }
 
         public void Show(){

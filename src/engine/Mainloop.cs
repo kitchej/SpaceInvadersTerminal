@@ -2,7 +2,6 @@ using System.Threading;
 
 namespace SimpleGameEngine{
     static class Mainloop{
-        static bool EXIT = false;
         public static void mainloop(Display displayObj, Input inputObj, SpriteController[]? spriteContollers = null){
             List<Thread> contollerThreads = new List<Thread>();
             Thread inputThread = new Thread(inputObj.Listen);
@@ -17,7 +16,6 @@ namespace SimpleGameEngine{
                     contollerThreads.Add(controllerThread);
                 }
             }
-            
             
             inputThread.Start();
             displayThread.Start();
