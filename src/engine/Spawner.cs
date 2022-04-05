@@ -14,10 +14,10 @@ namespace SimpleGameEngine{
         Type _spriteControllerCls;
         object?[] _spriteControllerAttr;
         Display _display;
-        ConstructorInfo? _spriteConstuctor;
+        ConstructorInfo? _spriteConstructor;
         ConstructorInfo? _spriteControllerConstructor;
 
-        // For spriteAttr & controllerAttr: Need to incldue ALL parameters of the target constructor, even defualt parameters
+        // For spriteAttr & controllerAttr: Need to incldue ALL parameters of the target constructor, even default parameters
         public Spawner(Type spriteCls, object[] spriteAttr, Type spriteControllerCls, object?[] controllerAttr, Display display){
             _spriteCls = spriteCls;
             _spriteAttr = spriteAttr;
@@ -29,9 +29,9 @@ namespace SimpleGameEngine{
             for (int i=0; i<_spriteAttr.Length; i++){
                 spriteAttrTypes[i] = _spriteAttr[i].GetType();
             }
-            _spriteConstuctor = _spriteCls.GetConstructor(spriteAttrTypes);
-            if (_spriteConstuctor == null){
-                throw new CannotFindConstructor($"No constructor found for \"{_spriteCls}\" with the specifed types");
+            _spriteConstructor = _spriteCls.GetConstructor(spriteAttrTypes);
+            if (_spriteConstructor == null){
+                throw new CannotFindConstructor($"No constructor found for \"{_spriteCls}\" with the specified types");
             }
 
             Type[] spriteControllerAttrTypes = new Type[_spriteControllerAttr.Length];
@@ -44,12 +44,12 @@ namespace SimpleGameEngine{
             }
             _spriteControllerConstructor = _spriteControllerCls.GetConstructor(spriteControllerAttrTypes);
             if (_spriteControllerConstructor == null){
-                throw new CannotFindConstructor($"No constructor found for \"{_spriteControllerCls}\" with the specifed types");
+                throw new CannotFindConstructor($"No constructor found for \"{_spriteControllerCls}\" with the specified types");
             }
         }
 
-        public void SpwawnSprite(int startx, int starty){
-            var newSprite = _spriteConstuctor.Invoke(_spriteAttr) as Pawn;
+        public void SpawnSprite(int startx, int starty){
+            var newSprite = _spriteConstructor.Invoke(_spriteAttr) as Pawn;
             _spriteControllerAttr[0] = newSprite;
             newSprite.MoveTo(startx, starty);
             var newController = _spriteControllerConstructor.Invoke(_spriteControllerAttr) as SpriteController;

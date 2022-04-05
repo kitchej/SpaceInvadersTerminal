@@ -14,7 +14,7 @@ namespace spaceInvaders{
 
         protected override void Behavior(){
             if (rnd.Next(0, 10) == rnd.Next(0, 10)){
-                _projectileSpawner.SpwawnSprite(_sprite.Coords[6].X, _sprite.Coords[6].Y + 1);
+                _projectileSpawner.SpawnSprite(_sprite.Coords[6].X, _sprite.Coords[6].Y + 1);
             }
             if (_direction == "left"){
                 collisionInfo = _sprite.MoveWest(1);
@@ -47,7 +47,7 @@ namespace spaceInvaders{
 
         protected override bool CheckDespawnConditions()
         {
-            if (collisionInfo.CollisionOccured){
+            if (collisionInfo.CollisionOccurred){
                 return true;
             }
             return false;
@@ -65,7 +65,7 @@ namespace spaceInvaders{
 
         protected override bool CheckDespawnConditions()
         {
-            if (collisionInfo.CollisionOccured){
+            if (collisionInfo.CollisionOccurred){
                 return true;
             }
             return false;

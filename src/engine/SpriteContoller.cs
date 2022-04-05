@@ -18,7 +18,7 @@ namespace SimpleGameEngine{
         public void Initialize(){
             bool despawn;
             if (_sprite == null){
-                throw new ArgumentNullException("\"sprite\" attrribute cannot be null");
+                throw new ArgumentNullException("\"sprite\" attribute cannot be null");
             }
             while (true){
                 Thread.Sleep(_speed);

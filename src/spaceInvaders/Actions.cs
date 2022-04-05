@@ -39,7 +39,7 @@ namespace spaceInvaders{
             _spawner = spawner;
         }
         public override void ExecuteAction(){
-            _spawner.SpwawnSprite(Sprite.Coords[0].X, Sprite.Coords[0].Y - 1);
+            _spawner.SpawnSprite(Sprite.Coords[0].X, Sprite.Coords[0].Y - 1);
         }
     }
 }
