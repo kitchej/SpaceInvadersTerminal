@@ -47,8 +47,6 @@ This game engine uses a coordinate system such that the orgin (0, 0) is in the *
 
 Sprites can be created using the ```Sprite``` class and it's descendants. The constructor accepts a filepath to a text file contatining ascii art. Any whitespace around the art will be ignored.
 
-Spawning utilizes reflection, as such it is nesscary to include ```using System.Refelection;``` to any file using the ```Spawner``` class as certain paramters need to be passed with the ```typeof()``` method.
-
 ## **--- Display.cs ---**
 ---
 ### **```class``` Display**
