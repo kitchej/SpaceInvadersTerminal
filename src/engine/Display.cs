@@ -2,7 +2,7 @@ namespace SimpleGameEngine{
     class Display{
         int _rowCount;
         int _columnCount;
-        char[,] screen;
+        char[,] _screen;
         char _background;
         public List<Sprite> Sprites {get;}
 
@@ -10,11 +10,11 @@ namespace SimpleGameEngine{
             _rowCount = rowCount;
             _columnCount = columnCount;
             _background = background;
-            screen = new char[_rowCount, _columnCount];
+            _screen = new char[_rowCount, _columnCount];
             Sprites = new List<Sprite>();
             for (int i=0;i<_rowCount;i++){
                 for (int j=0;j<_columnCount;j++){
-                    screen[i,j] = _background;
+                    _screen[i,j] = _background;
                 }
             }
         }
@@ -39,7 +39,7 @@ namespace SimpleGameEngine{
             if (x < 0 || x >= _columnCount){
                 throw new IndexOutOfRangeException("x value is out of bounds");
             }
-            screen[y, x] = character;
+            _screen[y, x] = character;
         }
 
         public void DrawSprite(Sprite sprite){
@@ -51,7 +51,7 @@ namespace SimpleGameEngine{
         public void ClearDisplay(){
             for (int i=0;i<_rowCount;i++){
                 for (int j=0;j<_columnCount;j++){
-                    screen[i,j] = _background;
+                    _screen[i,j] = _background;
                 }
             }
         }
@@ -74,7 +74,7 @@ namespace SimpleGameEngine{
             Console.Clear();
             for (int i=0;i<_rowCount;i++){
                 for (int j=0;j<_columnCount;j++){
-                    Console.Write(screen[i,j]);
+                    Console.Write(_screen[i,j]);
                 }
                 Console.Write('\n');
             }
@@ -89,7 +89,7 @@ namespace SimpleGameEngine{
                 Console.SetCursorPosition(0, 0);
                 for (int i=0;i<_rowCount;i++){
                     for (int j=0;j<_columnCount;j++){
-                        Console.Write(screen[i,j]);
+                        Console.Write(_screen[i,j]);
                     }
                     Console.Write('\n');
                 }

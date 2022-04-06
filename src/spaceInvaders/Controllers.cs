@@ -2,14 +2,29 @@ using SimpleGameEngine;
 
 namespace spaceInvaders{
     class EnemyContoller: SpriteController{
-        string _direction = "left";
-        CollisionInfo collisionInfo;
+        string _direction;
+        CollisionInfo _collisionInfo;
         Spawner _projectileSpawner;
         Random rnd = new Random();
         int _count;
         public EnemyContoller(Pawn sprite, Display display, int speed, Spawner projectileSpawner): base(sprite, display, speed){
             _projectileSpawner = projectileSpawner;
             _count = 0;
+            _direction = "left";
+        }
+
+        protected override bool CheckDespawnConditions()
+        {
+            if (_sprite.CollisionInfo.CollisionOccurred){
+                return true;
+            }
+            
+            if (_collisionInfo.CollisionOccurred){
+                if (_collisionInfo.Entity.SpriteId == "projectile"){
+                    return true;
+                }
+            }
+            return false;
         }
 
         protected override void Behavior(){
@@ -17,14 +32,14 @@ namespace spaceInvaders{
                 _projectileSpawner.SpawnSprite(_sprite.Coords[6].X, _sprite.Coords[6].Y + 1);
             }
             if (_direction == "left"){
-                collisionInfo = _sprite.MoveWest(1);
+                _collisionInfo = _sprite.MoveWest(1);
                 _count ++;
             }
             else if (_direction == "right"){
-                collisionInfo = _sprite.MoveEast(1);
+                _collisionInfo = _sprite.MoveEast(1);
                 _count ++;
             }
-            if (_count == 8){
+            if (_count == 1){
                     if(_direction == "right"){
                         _direction = "left";
                         _count = 0;
@@ -48,6 +63,7 @@ namespace spaceInvaders{
         protected override bool CheckDespawnConditions()
         {
             if (collisionInfo.CollisionOccurred){
+                collisionInfo.Entity.CollisionInfo = new CollisionInfo(true, _sprite);
                 return true;
             }
             return false;
