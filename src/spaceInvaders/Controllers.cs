@@ -1,26 +1,32 @@
 using SimpleGameEngine;
 
 namespace spaceInvaders{
-    class EnemyContoller: SpriteController{
+    class EnemyController: SpriteController{
         string _direction;
         CollisionInfo _collisionInfo;
         Spawner _projectileSpawner;
         Random rnd = new Random();
         int _count;
-        public EnemyContoller(Pawn sprite, Display display, int speed, Spawner projectileSpawner): base(sprite, display, speed){
+        Logger _logger;
+        public EnemyController(Pawn sprite, Display display, int speed, Spawner projectileSpawner): base(sprite, display, speed){
             _projectileSpawner = projectileSpawner;
             _count = 0;
             _direction = "left";
+            _logger = new Logger("EnemyController.log");
         }
 
         protected override bool CheckDespawnConditions()
         {
-            if (_sprite.CollisionInfo.CollisionOccurred){
-                return true;
-            }
-            
             if (_collisionInfo.CollisionOccurred){
                 if (_collisionInfo.Entity.SpriteId == "projectile"){
+                    _logger.Log($"{_sprite.SpriteId} detected collision with {_collisionInfo.Entity.SpriteId}");
+                    return true;
+                }
+            }
+
+            if(_sprite.LastCollided.CollisionOccurred){
+                if (_sprite.LastCollided.Entity.SpriteId == "projectile"){
+                    _logger.Log($"{_sprite.SpriteId} was informed of collision with {_sprite.LastCollided.Entity.SpriteId}");
                     return true;
                 }
             }
@@ -52,9 +58,9 @@ namespace spaceInvaders{
         }
     }
 
-    class ProjectileContoller: SpriteController{
+    class ProjectileController: SpriteController{
         CollisionInfo collisionInfo;
-        public ProjectileContoller(Pawn? sprite, Display display, int speed): base(sprite, display, speed){}
+        public ProjectileController(Pawn? sprite, Display display, int speed): base(sprite, display, speed){}
 
         protected override void Behavior(){
            collisionInfo = _sprite.MoveNorth(1);
@@ -71,9 +77,9 @@ namespace spaceInvaders{
 
     }
 
-    class EnemyProjectileContoller: SpriteController{
+    class EnemyProjectileController: SpriteController{
         CollisionInfo collisionInfo;
-        public EnemyProjectileContoller(Pawn? sprite, Display display, int speed): base(sprite, display, speed){}
+        public EnemyProjectileController(Pawn? sprite, Display display, int speed): base(sprite, display, speed){}
 
         protected override void Behavior(){
            collisionInfo = _sprite.MoveSouth(1);

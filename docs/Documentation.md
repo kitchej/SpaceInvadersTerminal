@@ -1,45 +1,54 @@
+# Table of contents
+
+- [Table of contents](#table-of-contents)
+- [**SIMPLE GAME ENGINE - C# EDITION**](#simple-game-engine---c-edition)
+- [**General Notes**](#general-notes)
+  - [# **--- Display.cs ---**](#-----displaycs----)
+  - [**```class``` Display**](#class-display)
+    - [**Properties**](#properties)
+    - [**Constructors**](#constructors)
+    - [**Methods**](#methods)
+- [**--- Input.cs ---**](#----inputcs----)
+  - [**``abstract`` ``class`` SpriteAction**](#abstract-class-spriteaction)
+    - [**Constructors**](#constructors-1)
+    - [**Methods**](#methods-1)
+  - [**```class``` Input**](#class-input)
+    - [**Constructors**](#constructors-2)
+    - [**Methods**](#methods-2)
+- [**-- Logger.cs ---**](#---loggercs----)
+  - [**```class``` Logger**](#class-logger)
+    - [**Constructors**](#constructors-3)
+    - [**Methods**](#methods-3)
+- [**--- Mainloop.cs ---**](#----mainloopcs----)
+  - [**```static``` ```class``` Mainloop**](#static-class-mainloop)
+    - [**Methods**](#methods-4)
+- [**--- Spawner.cs ---**](#----spawnercs----)
+  - [**```class``` Spawner**](#class-spawner)
+    - [**Constructors**](#constructors-4)
+    - [**Methods**](#methods-5)
+- [**--- Sprite.cs ---**](#----spritecs----)
+  - [**```struct``` Pixel**](#struct-pixel)
+    - [**Properties**](#properties-1)
+    - [**Constructors**](#constructors-5)
+  - [**```struct``` CollisionsInfo**](#struct-collisionsinfo)
+    - [**Properties**](#properties-2)
+  - [**```class``` Sprite**](#class-sprite)
+    - [**Properties**](#properties-3)
+    - [**Constructors**](#constructors-6)
+    - [**Methods**](#methods-6)
+  - [**```class``` Pawn: Sprite**](#class-pawn-sprite)
+    - [**Properties**](#properties-4)
+    - [**Constructors**](#constructors-7)
+    - [**Methods**](#methods-7)
+- [**--- SpriteController.cs ---**](#----spritecontrollercs----)
+  - [**```abstract``` ```class``` SpriteController**](#abstract-class-spritecontroller)
+    - [**Constructors**](#constructors-8)
+    - [**Methods**](#methods-8)
+
 # **SIMPLE GAME ENGINE - C# EDITION**
  
-This is a port/redesign of my original text-based game engine written in Python. It allows for simple, text-based games to be made in the terminal. Emphasis on simple; there is a lot it cannot do right now, but that shouldn't deter you from using your imagination. I did my best to ensure a modular design and current documentation so that anyone else (or future me) could make improvements.
- - [**SIMPLE GAME ENGINE - C# EDITION**](#simple-game-engine---c-edition)
-  - [**General Notes**](#general-notes)
-  - [## **--- Display.cs ---**](#-----displaycs----)
-    - [**```class``` Display**](#class-display)
-      - [**Properties**](#properties)
-      - [**Constructors**](#constructors)
-      - [**Methods**](#methods)
-  - [**--- Input.cs ---**](#----inputcs----)
-    - [**``abstract`` ``class`` SpriteAction**](#abstract-class-spriteaction)
-      - [**Constructors**](#constructors-1)
-      - [**Methods**](#methods-1)
-    - [**```class``` Input**](#class-input)
-      - [**Constructors**](#constructors-2)
-      - [**Methods**](#methods-2)
-  - [**--- Mainloop.cs ---**](#----mainloopcs----)
-    - [**```static``` ```class``` Mainloop**](#static-class-mainloop)
-      - [**Methods**](#methods-3)
-  - [**--- Spawner.cs ---**](#----spawnercs----)
-    - [**```class``` Spawner**](#class-spawner)
-      - [**Constructors**](#constructors-3)
-      - [**Methods**](#methods-4)
-  - [**--- Sprite.cs ---**](#----spritecs----)
-    - [**```struct``` Pixel**](#struct-pixel)
-      - [**Properties**](#properties-1)
-      - [**Constructors**](#constructors-4)
-    - [**```struct``` CollisionsInfo**](#struct-collisionsinfo)
-      - [**Properties**](#properties-2)
-    - [**```class``` Sprite**](#class-sprite)
-      - [**Properties**](#properties-3)
-      - [**Constructors**](#constructors-5)
-      - [**Methods**](#methods-5)
-    - [**```class``` Pawn: Sprite**](#class-pawn-sprite)
-      - [**Properties**](#properties-4)
-      - [**Constructors**](#constructors-6)
-      - [**Methods**](#methods-6)
-  - [**--- SpriteController.cs ---**](#----spritecontrollercs----)
-    - [**```abstract``` ```class``` SpriteController**](#abstract-class-spritecontroller)
-      - [**Constructors**](#constructors-7)
-      - [**Methods**](#methods-7)
+This is a port/redesign of my original text-based game engine written in Python. It allows for simple, text-based games to be made in the terminal. Emphasis on simple; there is a lot it cannot do right now, but that shouldn't deter you from using your imagination. I did my best to ensure a modular design and current documentation so that anyone else (but most likely future me) could make improvements.
+
 # **General Notes**
  
 This game engine uses a coordinate system such that the origin (0, 0) is in the *top, left-hand* corner.
@@ -132,14 +141,31 @@ Listens for user input from the keyboard and executes actions defined by a ```Sp
  
     Binds a ```SpriteAction``` class to the specified key.
  
-* **```void``` UnbindAction(ConsoleKey key)**
-*
+* **```void``` UnbindAction(```ConsoleKey``` key)**
+
     Unbinds a ```SpriteAction``` class from the specified key.
  
 * **```void``` Listen()**
-*
+
     Listens for keyboard input and executes bound actions until ```exitKey``` is pressed.
  
+---
+# **-- Logger.cs ---**
+
+## **```class``` Logger**
+
+A simple convince class for basic logging. 
+
+### **Constructors**
+* **Logger(```string``` logFile)**
+  
+    **logFile**: Filepath to log messages to. If the file does not exist, a new file is created when ```Log()``` is first called.
+
+### **Methods**
+* **```async``` ```void``` Log(```string``` message)**
+   
+   Appends a new message to the file specified by logFile.
+
 ---
  
 # **--- Mainloop.cs ---**
@@ -225,6 +251,8 @@ Represents a basic game object. Sprites consist of a list of ```Pixel``` structs
 *  **```bool``` HasCollisions**: A flag that determines if the sprite has collisions or not. Set to ```true``` for collisions, ```false``` for no collisions.
  
 *  **```int``` StackOrder**: Determines the stack order of the sprite. Sprites with lower values will appear under sprites with higher values.
+
+*  **```CollisionsInfo``` LastCollided**: Contains information about what last hit the sprite.
  
 ### **Constructors**
  
@@ -264,6 +292,8 @@ Represents a sprite with the ability to move.
 *  **```bool``` HasCollisions**: A flag that determines if the sprite has collisions or not. Set to ```true``` for collisions, ```false``` for no collisions.
  
 *  **```int``` StackOrder**: Determines the stack order of the sprite. Sprites with lower values will appear under sprites with higher values.
+
+*  **```CollisionsInfo``` LastCollided**: Contains information about what last hit the sprite. The ```MoveNorth()```, ```MoveSouth()```, ```MoveEast()```, ```MoveWest()``` methods automatically sets this property for the sprite that was hit. This can be used to aid in despawning. For example, now ```SpriteController.CheckDespawnConditions()``` can check this property to determine if a despawn needs to occur.
  
 ### **Constructors**
  

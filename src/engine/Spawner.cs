@@ -17,7 +17,7 @@ namespace SimpleGameEngine{
         ConstructorInfo? _spriteConstructor;
         ConstructorInfo? _spriteControllerConstructor;
 
-        // For spriteAttr & controllerAttr: Need to incldue ALL parameters of the target constructor, even default parameters
+        // For spriteAttr & controllerAttr: Need to include ALL parameters of the target constructor, even default parameters
         public Spawner(Type spriteCls, object[] spriteAttr, Type spriteControllerCls, object?[] controllerAttr, Display display){
             _spriteCls = spriteCls;
             _spriteAttr = spriteAttr;

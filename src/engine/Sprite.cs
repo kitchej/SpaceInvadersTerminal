@@ -29,6 +29,7 @@ namespace SimpleGameEngine{
         public string SpriteId {get;}
         public bool HasCollisions {get; set;} // This may need to be locked if edited from other threads
         public int StackOrder {get; set;} // This may need to be locked if edited from other threads
+        public CollisionInfo LastCollided {get; set;}
 
         public Sprite(string file, int startx, int starty, string spriteId, int stackOrder=0, bool collisions=true){
             
@@ -37,6 +38,7 @@ namespace SimpleGameEngine{
             Coords = new List<Pixel>();
             HasCollisions = collisions;
             CollisionInfo = new CollisionInfo(false, null);
+            LastCollided = new CollisionInfo(false, null);
             int x;
             int whiteSpace;
             string row;
@@ -161,6 +163,7 @@ namespace SimpleGameEngine{
                         Coords[i] = c;
                     }
                 }
+                CollisionInfo.Entity.LastCollided = new CollisionInfo(true, this);
                 
             }
             return CollisionInfo;
@@ -183,6 +186,7 @@ namespace SimpleGameEngine{
                         Coords[i] = c;
                     }
                 }
+                CollisionInfo.Entity.LastCollided = new CollisionInfo(true, this);
             }
             return CollisionInfo;
         }
@@ -203,6 +207,7 @@ namespace SimpleGameEngine{
                     Coords[i] = c;
                     }
                 }
+                CollisionInfo.Entity.LastCollided = new CollisionInfo(true, this);
             }
             return CollisionInfo;
         }
@@ -223,6 +228,7 @@ namespace SimpleGameEngine{
                         Coords[i] = c;
                     }
                }
+               CollisionInfo.Entity.LastCollided = new CollisionInfo(true, this);
             }
             return CollisionInfo;
         }

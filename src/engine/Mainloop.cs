@@ -2,26 +2,26 @@ using System.Threading;
 
 namespace SimpleGameEngine{
     static class Mainloop{
-        public static void mainloop(Display displayObj, Input inputObj, SpriteController[]? spriteContollers = null){
-            List<Thread> contollerThreads = new List<Thread>();
+        public static void mainloop(Display displayObj, Input inputObj, SpriteController[]? spriteControllers = null){
+            List<Thread> controllerThreads = new List<Thread>();
             Thread inputThread = new Thread(inputObj.Listen);
             Thread displayThread = new Thread(displayObj.Refresh);
             displayThread.IsBackground = true;
 
             Thread controllerThread;
-            if (spriteContollers != null){
-                foreach(var controller in spriteContollers){
+            if (spriteControllers != null){
+                foreach(var controller in spriteControllers){
                     controllerThread = new Thread(controller.Initialize);
                     controllerThread.IsBackground = true;
-                    contollerThreads.Add(controllerThread);
+                    controllerThreads.Add(controllerThread);
                 }
             }
             
             inputThread.Start();
             displayThread.Start();
 
-            if (contollerThreads.Count != 0){
-                foreach(var thread in contollerThreads){
+            if (controllerThreads.Count != 0){
+                foreach(var thread in controllerThreads){
                     thread.Start();
                 }
             }

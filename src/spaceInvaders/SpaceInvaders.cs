@@ -15,12 +15,12 @@ namespace spaceInvaders{
 
 
             List<Pawn> ships = new List<Pawn>();
-            List<EnemyContoller> controllers = new List<EnemyContoller>();
+            List<EnemyController> controllers = new List<EnemyController>();
             
             int startx = 2;
             int starty = 1;
-            for (int i=0;i<7;i++){
-                for(int j=0;j<11;j++){
+            for (int i=0;i<3;i++){
+                for(int j=0;j<6;j++){
                     ships.Add(new Pawn(@"src\spaceInvaders\sprites\alien1.txt", startx: startx, starty: starty, spriteId: "enemyShip", display: screen));
                     startx += 5;
                 }
@@ -30,8 +30,8 @@ namespace spaceInvaders{
             
             foreach (var s in ships){
                 screen.AddSprite(s);
-                controllers.Add(new EnemyContoller(s, screen, 500, new Spawner(typeof(Pawn), new object[] { @"src\spaceInvaders\sprites\projectile.txt", 30, 21, "enemyProjectile", screen, 0, true}, 
-                                          typeof(EnemyProjectileContoller), new object?[] {null, screen, 50}, 
+                controllers.Add(new EnemyController(s, screen, 500, new Spawner(typeof(Pawn), new object[] { @"src\spaceInvaders\sprites\projectile.txt", 30, 21, "enemyProjectile", screen, 0, true}, 
+                                          typeof(EnemyProjectileController), new object?[] {null, screen, 50}, 
                                           screen)));
             }
 
@@ -39,15 +39,15 @@ namespace spaceInvaders{
             
             Pawn ship = new Pawn(@"src\spaceInvaders\sprites\ship.txt", startx: 30, starty: 36, spriteId: "ship", display: screen, stackOrder: 0);
             Spawner shipProjectileSpawner = new Spawner(typeof(Pawn), new object[] { @"src\spaceInvaders\sprites\projectile.txt", 30, 21, "projectile", screen, 0, true}, 
-                                          typeof(ProjectileContoller), new object?[] {null, screen, 50}, 
+                                          typeof(ProjectileController), new object?[] {null, screen, 50}, 
                                           screen);
 
             // Pawn enemyShip = new Pawn(@"src\spaceInvaders\sprites\alien1.txt", startx: 30, starty: 12, spriteId: "enemyShip", display: screen);
             
             // Spawner enemyProjectileSpawner = new Spawner(typeof(Pawn), new object[] { @"src\spaceInvaders\sprites\projectile.txt", 30, 21, "enemyProjectile", screen, 0, true}, 
-            //                               typeof(EnemyProjectileContoller), new object?[] {null, screen, 50}, 
+            //                               typeof(EnemyProjectileController), new object?[] {null, screen, 50}, 
             //                               screen);
-            // EnemyContoller enemyAi = new EnemyContoller(enemyShip, screen, 500, enemyProjectileSpawner);
+            // EnemyController enemyAi = new EnemyController(enemyShip, screen, 500, enemyProjectileSpawner);
             
             screen.AddSprite(ship);
             screen.AddSprite(northBounds);
