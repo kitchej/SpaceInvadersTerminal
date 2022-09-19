@@ -42,4 +42,17 @@ namespace spaceInvaders{
             _spawner.SpawnSprite(Sprite.Coords[0].X, Sprite.Coords[0].Y - 1);
         }
     }
+
+    class StartGame: GameAction{
+        Display _display;
+        Input _input;
+        public StartGame(Display display, Input input){
+            _display = display;
+            _input = input;
+        }
+        public override void ExecuteAction()
+        {
+            Init.InitGame(_display, _input);
+        }
+    }
 }

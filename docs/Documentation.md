@@ -9,23 +9,25 @@
     - [**Constructors**](#constructors)
     - [**Methods**](#methods)
 - [**--- Input.cs ---**](#----inputcs----)
-  - [**``abstract`` ``class`` SpriteAction**](#abstract-class-spriteaction)
-    - [**Constructors**](#constructors-1)
+  - [**``abstract`` ``class`` GameAction**](#abstract-class-gameaction)
     - [**Methods**](#methods-1)
+  - [**``abstract`` ``class`` SpriteAction: GameAction**](#abstract-class-spriteaction-gameaction)
+    - [**Constructors**](#constructors-1)
+    - [**Methods**](#methods-2)
   - [**```class``` Input**](#class-input)
     - [**Constructors**](#constructors-2)
-    - [**Methods**](#methods-2)
+    - [**Methods**](#methods-3)
 - [**-- Logger.cs ---**](#---loggercs----)
   - [**```class``` Logger**](#class-logger)
     - [**Constructors**](#constructors-3)
-    - [**Methods**](#methods-3)
+    - [**Methods**](#methods-4)
 - [**--- Mainloop.cs ---**](#----mainloopcs----)
   - [**```static``` ```class``` Mainloop**](#static-class-mainloop)
-    - [**Methods**](#methods-4)
+    - [**Methods**](#methods-5)
 - [**--- Spawner.cs ---**](#----spawnercs----)
   - [**```class``` Spawner**](#class-spawner)
     - [**Constructors**](#constructors-4)
-    - [**Methods**](#methods-5)
+    - [**Methods**](#methods-6)
 - [**--- Sprite.cs ---**](#----spritecs----)
   - [**```struct``` Pixel**](#struct-pixel)
     - [**Properties**](#properties-1)
@@ -35,15 +37,15 @@
   - [**```class``` Sprite**](#class-sprite)
     - [**Properties**](#properties-3)
     - [**Constructors**](#constructors-6)
-    - [**Methods**](#methods-6)
+    - [**Methods**](#methods-7)
   - [**```class``` Pawn: Sprite**](#class-pawn-sprite)
     - [**Properties**](#properties-4)
     - [**Constructors**](#constructors-7)
-    - [**Methods**](#methods-7)
+    - [**Methods**](#methods-8)
 - [**--- SpriteController.cs ---**](#----spritecontrollercs----)
   - [**```abstract``` ```class``` SpriteController**](#abstract-class-spritecontroller)
     - [**Constructors**](#constructors-8)
-    - [**Methods**](#methods-8)
+    - [**Methods**](#methods-9)
 
 # **SIMPLE GAME ENGINE - C# EDITION**
  
@@ -108,8 +110,19 @@ Represents the main display of the game. There should only ever be one Display o
 ---
 
 # **--- Input.cs ---**
+
+## **``abstract`` ``class`` GameAction**
+Allows for the binding of keyboard input to an action to be performed.
+
+### **Methods**
  
-## **``abstract`` ``class`` SpriteAction**
+* **```abstract``` ```void``` ExecuteAction()**
+ 
+    Override this method with the actions to be performed when a key is pressed.
+
+---
+
+## **``abstract`` ``class`` SpriteAction: GameAction**
 Allows for the binding of keyboard input to an action to be performed by a ```Sprite``` object.
  
  

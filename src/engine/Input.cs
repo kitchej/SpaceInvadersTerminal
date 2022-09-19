@@ -1,26 +1,34 @@
 namespace SimpleGameEngine{
 
-    abstract class SpriteAction{
+    abstract class GameAction{
+        abstract public void ExecuteAction();
+    }
+
+    abstract class SpriteAction: GameAction{
         public Pawn Sprite {get; set;}
         public SpriteAction(Pawn sprite){
             Sprite = sprite;
         }
 
-        abstract public void ExecuteAction();
-
     }
+
+    
 
     class Input{
 
         ConsoleKey _exitKey;
         ConsoleKey _readKey;
-        SpriteAction? _actionToExecute;
-        Dictionary<ConsoleKey, SpriteAction> _bindings;
+        GameAction? _actionToExecute;
+        Dictionary<ConsoleKey, GameAction> _bindings;
 
         public Input(ConsoleKey exitKey){
             _exitKey = exitKey;
             _actionToExecute = null;
-            _bindings = new Dictionary<ConsoleKey, SpriteAction>();
+            _bindings = new Dictionary<ConsoleKey, GameAction>();
+        }
+
+        public void BindAction(ConsoleKey key, GameAction action){
+            _bindings.Add(key, action);
         }
 
         public void BindAction(ConsoleKey key, SpriteAction action){

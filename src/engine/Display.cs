@@ -43,9 +43,12 @@ namespace SimpleGameEngine{
         }
 
         public void DrawSprite(Sprite sprite){
-            foreach(var coord in sprite.Coords){
-                Draw(coord.X, coord.Y, coord.Character);
+            lock(sprite.Coords){
+                foreach(var coord in sprite.Coords){
+                    Draw(coord.X, coord.Y, coord.Character);
+                }
             }
+            
         }
         
         public void ClearDisplay(){
