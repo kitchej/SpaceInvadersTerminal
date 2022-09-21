@@ -1,6 +1,4 @@
-# Table of contents
 
-- [Table of contents](#table-of-contents)
 - [**SIMPLE GAME ENGINE - C# EDITION**](#simple-game-engine---c-edition)
 - [**General Notes**](#general-notes)
   - [# **--- Display.cs ---**](#-----displaycs----)
@@ -43,9 +41,12 @@
     - [**Constructors**](#constructors-7)
     - [**Methods**](#methods-8)
 - [**--- SpriteController.cs ---**](#----spritecontrollercs----)
-  - [**```abstract``` ```class``` SpriteController**](#abstract-class-spritecontroller)
+  - [**```abstract``` ```class``` Controller**](#abstract-class-controller)
     - [**Constructors**](#constructors-8)
     - [**Methods**](#methods-9)
+  - [**```abstract``` ```class``` SpriteController: Controller**](#abstract-class-spritecontroller-controller)
+    - [**Constructors**](#constructors-9)
+    - [**Methods**](#methods-10)
 
 # **SIMPLE GAME ENGINE - C# EDITION**
  
@@ -213,9 +214,9 @@ Responsible for spawning in sprites.
     **display**: A reference to a ```Display``` object.
  
 ### **Methods**
-* **```void``` SpawnSprite(```int``` startx, ```int``` starty)**
+* **```System.Thread``` SpawnSprite(```int``` startx, ```int``` starty)**
  
-    Spawns the sprite at the coordinates indicated by startx and starty and initiates its behavior.
+    Spawns the sprite at the coordinates indicated by startx and starty and initiates its behavior. Returns a reference to the thread the sprite's controller is running on.
  
 ---
  
@@ -266,6 +267,8 @@ Represents a basic game object. Sprites consist of a list of ```Pixel``` structs
 *  **```int``` StackOrder**: Determines the stack order of the sprite. Sprites with lower values will appear under sprites with higher values.
 
 *  **```CollisionsInfo``` LastCollided**: Contains information about what last hit the sprite.
+  
+*  **```bool``` IsDespawned**: Optional property that can be used to indicate if the sprite has been despawned.
  
 ### **Constructors**
  
@@ -307,6 +310,8 @@ Represents a sprite with the ability to move.
 *  **```int``` StackOrder**: Determines the stack order of the sprite. Sprites with lower values will appear under sprites with higher values.
 
 *  **```CollisionsInfo``` LastCollided**: Contains information about what last hit the sprite. The ```MoveNorth()```, ```MoveSouth()```, ```MoveEast()```, ```MoveWest()``` methods automatically sets this property for the sprite that was hit. This can be used to aid in despawning. For example, now ```SpriteController.CheckDespawnConditions()``` can check this property to determine if a despawn needs to occur.
+
+*  **```bool``` IsDespawned**: Optional property that can be used to indicate if the sprite has been despawned.
  
 ### **Constructors**
  
@@ -354,9 +359,34 @@ Represents a sprite with the ability to move.
  
 # **--- SpriteController.cs ---**
 
-Independently controls a sprite using code contained in ```Behavior()``` and despawns the sprite when the conditions specified in ```CheckDespawnConditions()``` are met.
+## **```abstract``` ```class``` Controller**
+An basic controller template for controlling entities other than a single sprite (such as a group of sprites that you want to move as a single entity for example). If you only want to control a single sprite, you should use the ```SpriteController``` class instead.
  
-## **```abstract``` ```class``` SpriteController**
+### **Constructors**
+ 
+* **Controller(```Display``` display, ```int``` speed)**
+
+    **display**: A ```Display``` object.
+ 
+    **speed**: An integer representing how many milliseconds to delay the behavior cycle. Controls the speed at which the controlled sprite operates.
+ 
+### **Methods**
+* **```abstract``` ```void``` Behavior()**
+ 
+    This method determines the actions an object will perform.
+ 
+* **```virtual``` ```bool``` CheckDespawnConditions()**
+
+    Method for defining when an object should despawn.
+ 
+* **```abstract``` ```void``` Initialize()**
+ 
+    Put code for initializing the object's behavior cycle here.
+
+
+ 
+## **```abstract``` ```class``` SpriteController: Controller**
+Independently controls a sprite using code contained in ```Behavior()``` and despawns the sprite when the conditions specified in ```CheckDespawnConditions()``` are met.
  
 ### **Constructors**
  

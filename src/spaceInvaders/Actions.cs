@@ -35,11 +35,19 @@ namespace spaceInvaders{
 
     class ShootProjectile: SpriteAction{
         Spawner _spawner;
-        public ShootProjectile(Pawn sprite, Spawner spawner): base(sprite){
+        int _limit;
+
+        Thread? _thread;
+        public ShootProjectile(Pawn sprite, Spawner spawner, int limit): base(sprite){
             _spawner = spawner;
+            _limit = limit;
+            _thread = null;
         }
         public override void ExecuteAction(){
-            _spawner.SpawnSprite(Sprite.Coords[0].X, Sprite.Coords[0].Y - 1);
+            if (_thread == null || !_thread.IsAlive){
+                _thread = _spawner.SpawnSprite(Sprite.Coords[0].X, Sprite.Coords[0].Y - 1);
+            }
+            
         }
     }
 }

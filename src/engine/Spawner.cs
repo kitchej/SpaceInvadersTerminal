@@ -48,7 +48,7 @@ namespace SimpleGameEngine{
             }
         }
 
-        public void SpawnSprite(int startx, int starty){
+        public Thread SpawnSprite(int startx, int starty){
             var newSprite = _spriteConstructor.Invoke(_spriteAttr) as Pawn;
             _spriteControllerAttr[0] = newSprite;
             newSprite.MoveTo(startx, starty);
@@ -58,6 +58,7 @@ namespace SimpleGameEngine{
             Thread controllerThread = new Thread(newController.Initialize);
             controllerThread.IsBackground = true;
             controllerThread.Start();
+            return controllerThread;
         }
     }
 }

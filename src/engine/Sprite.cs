@@ -30,6 +30,7 @@ namespace SimpleGameEngine{
         public bool HasCollisions {get; set;} // This may need to be locked if edited from other threads
         public int StackOrder {get; set;} // This may need to be locked if edited from other threads
         public CollisionInfo LastCollided {get; set;}
+        public bool IsDespawned {get;set;}
 
         public Sprite(string file, int startx, int starty, string spriteId, int stackOrder=0, bool collisions=true){
             
@@ -39,6 +40,7 @@ namespace SimpleGameEngine{
             HasCollisions = collisions;
             CollisionInfo = new CollisionInfo(false, null);
             LastCollided = new CollisionInfo(false, null);
+            IsDespawned = false;
             int x;
             int whiteSpace;
             string row;

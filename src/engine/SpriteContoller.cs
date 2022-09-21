@@ -1,13 +1,11 @@
 namespace SimpleGameEngine{
-    abstract class SpriteController{
 
+    abstract class Controller{
         protected Display _display;
-        protected Pawn? _sprite;
         protected int _speed;
 
-        public SpriteController(Pawn? sprite, Display display, int speed){
+        public Controller(Display display, int speed){
             _display = display;
-            _sprite = sprite;
             _speed = speed;
         }
 
@@ -15,7 +13,19 @@ namespace SimpleGameEngine{
 
         protected virtual bool CheckDespawnConditions(){return false;}
 
-        public void Initialize(){
+        public abstract void Initialize();
+
+    }
+
+    abstract class SpriteController: Controller{
+
+        protected Pawn _sprite;
+
+        public SpriteController(Display display, int speed, Pawn sprite): base(display, speed){
+            _sprite = sprite;
+        }
+
+        public override void Initialize(){
             bool despawn;
             if (_sprite == null){
                 throw new ArgumentNullException("\"sprite\" attribute cannot be null");
