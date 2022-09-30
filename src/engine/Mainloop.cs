@@ -1,4 +1,5 @@
 using System.Threading;
+using spaceInvaders;
 
 namespace SimpleGameEngine{
     static class Mainloop{
@@ -16,6 +17,10 @@ namespace SimpleGameEngine{
                     controllerThreads.Add(controllerThread);
                 }
             }
+
+            ThreadController test = new ThreadController(controllerThreads[0], spriteControllers[0]);
+
+            inputObj.BindAction(ConsoleKey.P, new Pause(test));
             
             inputThread.Start();
             displayThread.Start();

@@ -139,6 +139,9 @@ namespace spaceInvaders{
         public override void Initialize(){
             Pawn? despawn;
             while (true){
+                if (Stop){
+                    Thread.Sleep(Timeout.Infinite); // Thread will sleep until another thread wakes it up
+                }
                 Thread.Sleep(_speed);
                 Behavior();
                 despawn = CheckDespawn();
@@ -237,29 +240,5 @@ namespace spaceInvaders{
                 }
             }
         }
-    }
-
-    class ThreadController{
-        Thread[] _threads;
-        Thread _inputThread;
-
-        public ThreadController(Thread[] threads, Thread inputThread){
-            _threads = threads;
-            _inputThread = inputThread;
-        }
-
-        public void PauseAll(){
-
-        }
-
-        public void PauseGame(){
-            foreach(Thread thread in _threads){
-                if (thread == _inputThread){
-                    thread.Join();
-                }
-            }
-        }
-
-
     }
 }

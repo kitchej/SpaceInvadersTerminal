@@ -4,6 +4,8 @@ namespace SimpleGameEngine{
         protected Display _display;
         protected int _speed;
 
+        public bool Stop {get; set;}
+
         public Controller(Display display, int speed){
             _display = display;
             _speed = speed;
@@ -31,6 +33,9 @@ namespace SimpleGameEngine{
                 throw new ArgumentNullException("\"sprite\" attribute cannot be null");
             }
             while (true){
+                if (Stop){
+                    Thread.Sleep(Timeout.Infinite);
+                }
                 Thread.Sleep(_speed);
                 Behavior();
                 despawn = CheckDespawnConditions();

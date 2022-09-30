@@ -50,4 +50,15 @@ namespace spaceInvaders{
             
         }
     }
+
+    class Pause: GameAction{
+        ThreadController _controller;
+        public Pause(ThreadController controller): base(){
+            _controller = controller;
+        }
+
+        public override void ExecuteAction(){
+            _controller.Pause();
+        }
+    }
 }
