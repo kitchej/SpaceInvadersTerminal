@@ -1,14 +1,16 @@
 namespace SimpleGameEngine{
 
     abstract class Controller{
-        protected Display _display;
+        protected CentralController _controller;
         protected int _speed;
+        public string Id {get; set;}
 
         public bool Stop {get; set;}
 
-        public Controller(Display display, int speed){
-            _display = display;
+        public Controller(CentralController centralController, int speed, string controllerId){
+            _controller = centralController;
             _speed = speed;
+            Id = controllerId;
         }
 
         protected abstract void Behavior();
@@ -23,7 +25,7 @@ namespace SimpleGameEngine{
 
         protected Pawn _sprite;
 
-        public SpriteController(Display display, int speed, Pawn sprite): base(display, speed){
+        public SpriteController(CentralController centralController, int speed, string controllerId, Pawn sprite): base(centralController, speed, controllerId){
             _sprite = sprite;
         }
 
@@ -34,13 +36,18 @@ namespace SimpleGameEngine{
             }
             while (true){
                 if (Stop){
-                    Thread.Sleep(Timeout.Infinite);
-                }
+                    try{
+                        Thread.Sleep(Timeout.Infinite);
+                    }
+                    catch(ThreadInterruptedException){
+                        continue;
+                    }
+                } 
                 Thread.Sleep(_speed);
                 Behavior();
                 despawn = CheckDespawnConditions();
                 if (despawn){
-                    _display.DeleteSprite(_sprite);
+                    _controller.DeleteSprite(_sprite);
                     return;
                 }
             }

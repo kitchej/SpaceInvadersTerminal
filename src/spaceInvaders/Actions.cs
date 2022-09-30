@@ -52,13 +52,30 @@ namespace spaceInvaders{
     }
 
     class Pause: GameAction{
-        ThreadController _controller;
-        public Pause(ThreadController controller): base(){
+        CentralController _controller;
+        string _id;
+
+        bool _paused;
+
+        Logger logger;
+
+        public Pause(CentralController controller, string id){
             _controller = controller;
+            _id = id;
+            _paused = false;
+            logger = new Logger("Pause.log");
         }
 
         public override void ExecuteAction(){
-            _controller.Pause();
+            if (_paused){
+                _controller.ResumeAll();
+                _paused = false;
+            }
+            else{
+                _controller.PauseAll();
+                _paused = true;
+            }
+            
         }
     }
 }

@@ -112,17 +112,17 @@ namespace SimpleGameEngine{
     }
 
     class Pawn: Sprite{
-        Display _display;
+        CentralController _controller;
 
-        public Pawn(string file, int startx, int starty, string spriteId, Display display, int stackOrder=0, bool collisions=true): 
+        public Pawn(string file, int startx, int starty, string spriteId, CentralController centralController, int stackOrder=0, bool collisions=true): 
         base(file, startx, starty, spriteId, stackOrder, collisions){
-            _display = display;
+            _controller = centralController;
         }
 
         CollisionInfo CheckCollisions(){
             CollisionInfo output = new CollisionInfo();
-            lock (_display.Sprites){
-                foreach(var sprite in _display.Sprites){
+            lock (_controller.Sprites){
+                foreach(var sprite in _controller.Sprites){
                     if (sprite == this){
                         continue;
                     }

@@ -1,17 +1,18 @@
 namespace SimpleGameEngine{
+
     class Display{
+        CentralController _controller;
         int _rowCount;
         int _columnCount;
         char[,] _screen;
         char _background;
-        public List<Sprite> Sprites {get;}
 
-        public Display(int rowCount, int columnCount, char background=' '){
+        public Display(CentralController CentralController, int rowCount, int columnCount, char background=' '){
+            _controller = CentralController;
             _rowCount = rowCount;
             _columnCount = columnCount;
             _background = background;
             _screen = new char[_rowCount, _columnCount];
-            Sprites = new List<Sprite>();
             for (int i=0;i<_rowCount;i++){
                 for (int j=0;j<_columnCount;j++){
                     _screen[i,j] = _background;
@@ -20,8 +21,8 @@ namespace SimpleGameEngine{
         }
 
         void RefreshSprites(){
-            lock(Sprites){
-                foreach(var sprite in Sprites){
+            lock(_controller.Sprites){
+                foreach(var sprite in _controller.Sprites){
                     try{
                         DrawSprite(sprite);
                     }
@@ -56,20 +57,6 @@ namespace SimpleGameEngine{
                 for (int j=0;j<_columnCount;j++){
                     _screen[i,j] = _background;
                 }
-            }
-        }
-        
-        public void AddSprite(Sprite sprite){
-            lock (Sprites){
-                Sprites.Add(sprite); 
-                Sprites.Sort(Sprite.CompareByStackOrder);
-            }
-        }
-
-        public void DeleteSprite(Sprite sprite){
-            lock (Sprites){
-                Sprites.Remove(sprite);
-                Sprites.Sort(Sprite.CompareByStackOrder);
             }
         }
 
