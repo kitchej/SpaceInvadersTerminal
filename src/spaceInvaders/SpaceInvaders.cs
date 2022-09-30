@@ -7,7 +7,7 @@ namespace spaceInvaders{
         static void Main(){
             CentralController mainController = new CentralController();
             Display screen = new Display(mainController, 40, 60);
-            Input input = new Input(exitKey: ConsoleKey.Q);
+            Input input = new Input();
 
             // Intro Screen
 
@@ -40,13 +40,14 @@ namespace spaceInvaders{
             mainController.AddSprite(southBounds);
             mainController.AddSprite(westBounds);
             mainController.AddSprite(eastBounds);
-
+            
+            input.BindAction(ConsoleKey.Q, new EndGame(mainController));
             input.BindAction(ConsoleKey.A, new MoveWest(ship));
             input.BindAction(ConsoleKey.D, new MoveEast(ship));
             input.BindAction(ConsoleKey.W, new MoveNorth(ship));
             input.BindAction(ConsoleKey.S, new MoveSouth(ship));
             input.BindAction(ConsoleKey.Spacebar, new ShootProjectile(ship, shipProjectileSpawner, 1));
-            input.BindAction(ConsoleKey.P, new Pause(mainController, "MasterEnemyCon"));
+            input.BindAction(ConsoleKey.P, new Pause(mainController, input));
             
             mainController.mainloop(screen, input, new Controller[] {masterEnemyController});
 

@@ -143,7 +143,6 @@ namespace spaceInvaders{
                 if (Stop){
                     try{
                         Thread.Sleep(Timeout.Infinite); // Thread will sleep until another thread wakes it up
-
                     }
                     catch(ThreadInterruptedException){
                         continue;

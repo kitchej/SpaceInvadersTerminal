@@ -15,17 +15,15 @@ namespace SimpleGameEngine{
 
 
     class Input{
-
-        ConsoleKey _exitKey;
         ConsoleKey _readKey;
         GameAction? _actionToExecute;
         Dictionary<ConsoleKey, GameAction> _bindings;
+        public bool Kill{get; set;}
 
-
-        public Input(ConsoleKey exitKey){
-            _exitKey = exitKey;
+        public Input(){
             _actionToExecute = null;
             _bindings = new Dictionary<ConsoleKey, GameAction>();
+            Kill = false;
         }
 
         public void BindAction(ConsoleKey key, GameAction action){
@@ -42,11 +40,11 @@ namespace SimpleGameEngine{
 
         public void Listen(){
             while (true){
-                _readKey = Console.ReadKey(intercept: true).Key;
-                if (_readKey == _exitKey){
+                if (Kill){
                     Console.CursorVisible = true;
                     break;
                 }
+                _readKey = Console.ReadKey(intercept: true).Key;
                 try{
                     _bindings.TryGetValue(_readKey, out _actionToExecute);
                     if (_actionToExecute == null){

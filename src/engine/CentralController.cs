@@ -107,6 +107,10 @@ namespace SimpleGameEngine{
             }
         }
 
+        public void EndGame(){
+            _input.Kill = true;
+        }
+
         public void mainloop(Display displayObj, Input inputObj, Controller[]? spriteControllers = null){
             _display = displayObj;
             _input = inputObj;
