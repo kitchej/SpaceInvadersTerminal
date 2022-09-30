@@ -146,7 +146,7 @@ namespace spaceInvaders{
                 }
                 catch(ThreadInterruptedException){
                     /* 
-                    This exception needs to be caught or the game will 
+                    This exception needs to be caught here or the game will 
                     crash if CentralController.ResumeAll() is spammed. 
                     */
                 }
