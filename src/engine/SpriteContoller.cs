@@ -42,12 +42,22 @@ namespace SimpleGameEngine{
                     catch(ThreadInterruptedException){
                         continue;
                     }
-                } 
-                Thread.Sleep(_speed);
+                }
+                try{
+                    Thread.Sleep(_speed);
+                }
+                catch(ThreadInterruptedException){
+                    /* 
+                    This exception needs to be caught or the game will 
+                    crash if CentralController.ResumeAll() or ResumeController() is spammed. 
+                    */
+                }  
+                
                 Behavior();
                 despawn = CheckDespawnConditions();
                 if (despawn){
                     _controller.DeleteSprite(_sprite);
+                    _controller.RemoveController(Id);
                     return;
                 }
             }

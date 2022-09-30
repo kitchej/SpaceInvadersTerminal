@@ -139,15 +139,27 @@ namespace spaceInvaders{
         public override void Initialize(){
             Pawn? despawn;
             while (true){
-                Thread.Sleep(_speed);
+                // THIS TRY BLOCK NEEDS TO BE FIRST!
+                // I DON'T KNOW WHY, BUT IF I MOVE IT THE GAME WILL NOT PAUSE PROPERLY
+                try{
+                    Thread.Sleep(_speed);
+                }
+                catch(ThreadInterruptedException){
+                    /* 
+                    This exception needs to be caught or the game will 
+                    crash if CentralController.ResumeAll() is spammed. 
+                    */
+                }
+                
                 if (Stop){
                     try{
-                        Thread.Sleep(Timeout.Infinite); // Thread will sleep until another thread wakes it up
+                        Thread.Sleep(Timeout.Infinite);
                     }
                     catch(ThreadInterruptedException){
                         continue;
                     }
                 }
+                
                 Behavior();
                 despawn = CheckDespawn();
                 if (despawn != null){
