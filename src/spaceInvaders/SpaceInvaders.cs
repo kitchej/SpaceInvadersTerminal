@@ -12,10 +12,11 @@ namespace spaceInvaders{
 
         static void Main(){
 
-            Console.SetWindowSize(60, 41);
+            
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)){
                 // Below is needed to prevent the console window from being resized when started from an executable
+                Console.SetWindowSize(60, 41);
                 const int MF_BYCOMMAND = 0x00000000;
                 const int SC_CLOSE = 0xF060;
                 const int SC_MINIMIZE = 0xF020;
