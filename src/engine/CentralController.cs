@@ -1,6 +1,6 @@
 namespace SimpleGameEngine{
 
-    struct ControllerInfo{
+    internal struct ControllerInfo{
         public Controller Controller{get; set;}
 
         public Thread Thread{get; set;}
@@ -8,9 +8,7 @@ namespace SimpleGameEngine{
         public ControllerInfo(Controller controller, Thread controllerThread){
             Controller = controller;
             Thread = controllerThread;
-        }
-
-        
+        }    
     }
 
     class CentralController{
@@ -46,7 +44,9 @@ namespace SimpleGameEngine{
         }
 
         public void DeleteAllSprites(){
-            Sprites.Clear();
+            lock(Sprites){
+                Sprites.Clear();
+            }
         }
 
         public bool AddController(Controller controller, Thread thread){
@@ -85,7 +85,6 @@ namespace SimpleGameEngine{
                 try{
                     ControllerInfo controller = _controllers[controllerId];
                     controller.Controller.Stop = false;
-                    logger.Log($"{controller.Controller.Id} | {controller.Thread}");
                     controller.Thread.Interrupt();
                     return true;
                 }
@@ -98,6 +97,9 @@ namespace SimpleGameEngine{
         public void PauseAll(){
             lock(_controllers){
                 foreach(var controller in _controllers){
+                    if (controller.Value.Controller.Stop == true){
+                        continue;
+                    }
                     controller.Value.Controller.Stop = true;
                 }
             }
@@ -106,6 +108,9 @@ namespace SimpleGameEngine{
         public void ResumeAll(){
             lock(_controllers){
                 foreach(var controller in _controllers){
+                    if (controller.Value.Controller.Stop == false){
+                        continue;
+                    }
                     controller.Value.Controller.Stop = false;
                     controller.Value.Thread.Interrupt();
                 }
@@ -117,7 +122,7 @@ namespace SimpleGameEngine{
             Environment.Exit(0);
         }
 
-        public void mainloop(Display displayObj, Input inputObj, Controller[]? spriteControllers = null){
+        public void Mainloop(Display displayObj, Input inputObj, Controller[]? spriteControllers = null){
             _display = displayObj;
             _input = inputObj;
 

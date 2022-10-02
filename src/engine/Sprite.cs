@@ -121,6 +121,11 @@ namespace SimpleGameEngine{
 
         CollisionInfo CheckCollisions(){
             CollisionInfo output = new CollisionInfo();
+            if (!HasCollisions){
+                output.CollisionOccurred = false;
+                output.Entity = null;
+                return output;
+            }
             lock (_controller.Sprites){
                 foreach(var sprite in _controller.Sprites){
                     if (sprite == this){

@@ -115,7 +115,7 @@ namespace spaceInvaders{
                     _passes ++;
                 }
             }
-            if (_passes == 3){
+            if (_passes == 2){
                 MoveAllSouth(1);
                 _passes = 0;
                 if (_speed > 125){

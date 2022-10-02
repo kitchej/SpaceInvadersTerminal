@@ -1,51 +1,52 @@
 
 - [**SIMPLE GAME ENGINE - C# EDITION**](#simple-game-engine---c-edition)
 - [**General Notes**](#general-notes)
-  - [# **--- Display.cs ---**](#-----displaycs----)
-  - [**```class``` Display**](#class-display)
+- [**--- CentralController.cs ---**](#----centralcontrollercs----)
+  - [**```class``` CentralController**](#class-centralcontroller)
     - [**Properties**](#properties)
     - [**Constructors**](#constructors)
     - [**Methods**](#methods)
+- [**--- Display.cs ---**](#----displaycs----)
+  - [**```class``` Display**](#class-display)
+    - [**Constructors**](#constructors-1)
+    - [**Methods**](#methods-1)
 - [**--- Input.cs ---**](#----inputcs----)
   - [**``abstract`` ``class`` GameAction**](#abstract-class-gameaction)
-    - [**Methods**](#methods-1)
-  - [**``abstract`` ``class`` SpriteAction: GameAction**](#abstract-class-spriteaction-gameaction)
-    - [**Constructors**](#constructors-1)
     - [**Methods**](#methods-2)
-  - [**```class``` Input**](#class-input)
+  - [**``abstract`` ``class`` SpriteAction: GameAction**](#abstract-class-spriteaction-gameaction)
     - [**Constructors**](#constructors-2)
     - [**Methods**](#methods-3)
-- [**-- Logger.cs ---**](#---loggercs----)
-  - [**```class``` Logger**](#class-logger)
+  - [**```class``` Input**](#class-input)
     - [**Constructors**](#constructors-3)
     - [**Methods**](#methods-4)
-- [**--- Mainloop.cs ---**](#----mainloopcs----)
-  - [**```static``` ```class``` Mainloop**](#static-class-mainloop)
+- [**-- Logger.cs ---**](#---loggercs----)
+  - [**```class``` Logger**](#class-logger)
+    - [**Constructors**](#constructors-4)
     - [**Methods**](#methods-5)
 - [**--- Spawner.cs ---**](#----spawnercs----)
   - [**```class``` Spawner**](#class-spawner)
-    - [**Constructors**](#constructors-4)
+    - [**Constructors**](#constructors-5)
     - [**Methods**](#methods-6)
 - [**--- Sprite.cs ---**](#----spritecs----)
   - [**```struct``` Pixel**](#struct-pixel)
     - [**Properties**](#properties-1)
-    - [**Constructors**](#constructors-5)
+    - [**Constructors**](#constructors-6)
   - [**```struct``` CollisionsInfo**](#struct-collisionsinfo)
     - [**Properties**](#properties-2)
   - [**```class``` Sprite**](#class-sprite)
     - [**Properties**](#properties-3)
-    - [**Constructors**](#constructors-6)
+    - [**Constructors**](#constructors-7)
     - [**Methods**](#methods-7)
   - [**```class``` Pawn: Sprite**](#class-pawn-sprite)
     - [**Properties**](#properties-4)
-    - [**Constructors**](#constructors-7)
+    - [**Constructors**](#constructors-8)
     - [**Methods**](#methods-8)
 - [**--- SpriteController.cs ---**](#----spritecontrollercs----)
   - [**```abstract``` ```class``` Controller**](#abstract-class-controller)
-    - [**Constructors**](#constructors-8)
+    - [**Constructors**](#constructors-9)
     - [**Methods**](#methods-9)
   - [**```abstract``` ```class``` SpriteController: Controller**](#abstract-class-spritecontroller-controller)
-    - [**Constructors**](#constructors-9)
+    - [**Constructors**](#constructors-10)
     - [**Methods**](#methods-10)
 
 # **SIMPLE GAME ENGINE - C# EDITION**
@@ -57,20 +58,87 @@ This is a port/redesign of my original text-based game engine written in Python.
 This game engine uses a coordinate system such that the origin (0, 0) is in the *top, left-hand* corner.
  
 Sprites can be created using the ```Sprite``` class and its descendants. The constructor accepts a file path to a text file containing ascii art. Any whitespace around the art will be ignored.
- 
-# **--- Display.cs ---**
+
 ---
-## **```class``` Display**
+# **--- CentralController.cs ---**
+
+## **```class``` CentralController**
+
+**NOTE: Other classes in this engine rely on the existence of an object of this class. Therefore, an object of this class should always be created first, and there should only ever be one instance of this class per game.**
  
-Represents the main display of the game. There should only ever be one Display object per game. Sprites will be drawn to the screen automatically, provided ```Refresh()``` has been called. Sprites can be added and removed from the game through the ```AddSprite()``` and the ```RemoveSprite()``` methods. Though individual characters and Sprite objects can be drawn to the screen with ```Draw()```, ```DrawSprite()```, and displayed with ```Show()```, these changes will not show up in during the main game loop. These are methods used internally by ```Refresh()``` but made public due to their usefulness for visualizing sprite positions on the screen for debuging.
+A central controller for the game. Contains methods for starting the mainloop, allowing for pausing/resuming threads, and de-spawning/spawning sprites. While most of the time you will want to use the ```Spawner``` class for spawning and despawing sprites, there are methods here that allow you to manually spawn and de-spawn sprites if needed. Note, however, if you want to manually spawn/despwawn sprites to be controlled by a ```Controller``` or ```SpriteController```class, you will have to also need manually create a controller object and put it on a thread. You will then need to pass both a reference to the thread and the controller object you created using ```AddController()``` and remove it when you're done with ```RemoveController()``` to allow this class to work properly.
  
 ### **Properties**
  
-* **```List<Sprite>``` Sprites**: A list of sprites to be drawn to the screen. This property is read-only. In order to add or remove sprites from this list, you must use AddSprite() or RemoveSprite() respectively.
+* **```List<Sprite>``` Sprites**: A list of sprites that are currently being drawn to the screen. This property is read-only. In order to add or remove sprites from this list, you must use ```AddSprite()``` or ```DeleteSprite()``` respectively.
  
 ### **Constructors**
  
- * **Display(```int``` rowCount, ```int``` columnCount, ```char``` background=' ')**
+ * **CentralController()**
+ 
+ 
+### **Methods**
+ 
+* **```void``` AddSprite(```Sprite``` sprite)**
+ 
+  Adds a sprite to the ```Sprites``` list. In order for any sprite to show up on screen, it must be added with this method.
+ 
+ 
+* **```void``` DeleteSprite(```Sprite``` sprite)**
+ 
+    Removes a sprite from the ```Sprites``` list. This has the effect of "de-spwaning" the sprite. NOTE: This method just stops the sprite from being drawn top the screen and it's controller will still be running.
+ 
+ 
+* **```void``` DeleteAllSprites()**
+ 
+    Clears the ```Sprites``` list, deleting all sprites from the display.
+ 
+ 
+* **```bool``` AddController(```Controller``` controller, ```Thread``` thread)**
+ 
+    Makes ```CentralController``` aware of a Controller object created manually. Returns ```false``` if the controller is already in the dictionary. The ```Spawner``` class already takes care of this task for you when spawning a sprite.
+ 
+* **```bool``` RemoveController(```string``` controllerId)**
+ 
+    Removes a controller from  ```CentralController```'s internal dictionary. Returns ```false``` if the controller is not in the dictionary. A ```SpriteController``` class automatically preforms this task when it's despawn conditions are met.
+ 
+* **```bool``` PauseController(```string``` controllerId)**
+ 
+    Pauses the controller specified by ```controllerId```. Returns ```false``` of the controller is not found.
+
+* **```bool``` ResumeController(```string``` controllerId)**
+ 
+    Resumes the controller specified by ```controllerId```. Returns ```false``` of the controller is not found.
+
+* **```void``` PauseAll()**
+ 
+    Pauses all controllers currently running.
+
+* **```void``` ResumeAll()**
+ 
+    Resumes all controllers that are stopped
+
+* **```void``` EndGame()**
+ 
+    Ends the game.
+
+* **```void``` mainloop(```Display``` displayObj, ```Input``` inputObj, ```SpriteController[]?``` spriteControllers = ```null```)**
+ 
+    Initializes the main game loop.
+
+
+---
+# **--- Display.cs ---**
+
+## **```class``` Display**
+ 
+Represents the main display of the game. There should only ever be one Display object per game. Sprites will be drawn to the screen automatically, provided ```Refresh()``` has been called. Though individual characters and Sprite objects can be drawn to the screen with ```Draw()```, ```DrawSprite()```, and displayed with ```Show()```, these changes will not show up in during the main game loop. These are methods used internally by ```Refresh()``` but made public due to their usefulness for visualizing sprite positions on the screen for debuging.
+ 
+### **Constructors**
+ 
+ * **Display(```CentralController``` CentralController, ```int``` rowCount, ```int``` columnCount, ```char``` background=' ')**
+
+    **centralController**: A reference to the game's ```CentralController``` object.
  
     **rowCount**: The number of rows the display will have
  
@@ -80,17 +148,7 @@ Represents the main display of the game. There should only ever be one Display o
  
  
 ### **Methods**
- 
-* **```void``` AddSprite(```Sprite``` sprite)**
- 
-  Adds a sprite to the ```Sprites``` list of the display. In order for any sprite to show up on screen, it must be added with this method.
- 
- 
-* **```void``` DeleteSprite(```Sprite``` sprite)**
- 
-    Removes a sprite from the ```Sprites``` list.
- 
- 
+
 * **```void``` Draw(```int``` x, ```int``` y, ```char``` character)**
  
     Draws a single character to the internal display buffer. Throws IndexOutOfRangeException if the character is drawn outside the screen bounds.
@@ -99,6 +157,10 @@ Represents the main display of the game. There should only ever be one Display o
 * **```void``` DrawSprite(```Sprite``` sprite)**
  
     Draws a single ```Sprite``` object to the screen. This does not add the sprite to the ```Display.Sprites``` list.
+
+* **```void``` ClearDisplay()**
+
+    Clears the internal display buffer.
  
 * **```void``` Show()**
  
@@ -106,7 +168,7 @@ Represents the main display of the game. There should only ever be one Display o
  
 * **```void``` Refresh()**
  
-    Begins the refresh cycle. The internal display buffer is cleared once every cycle and all sprites in the Sprites list are redrawn. At the moment, if called outside of ```Mainloop.mainloop```, it will loop forever until the program is stopped with Ctr+C.
+    Initializes the display. Do not call this method on its own as you will not be able to control the game. ```CentralController.mainloop``` will do this for you when you call it.
  
 ---
 
@@ -146,22 +208,24 @@ Allows for the binding of keyboard input to an action to be performed by a ```Sp
 Listens for user input from the keyboard and executes actions defined by a ```SpriteAction``` class until the ```exitKey``` is pressed.
  
 ### **Constructors**
-* **Input(```ConsoleKey``` exitKey)**
- 
-    **exitKey**: The key that will trigger an exit from the game.
+* **Input()**
  
 ### **Methods**
-* **```void``` BindAction(```ConsoleKey``` key, ```SpriteAction``` action)**
+* **```void``` BindAction(```ConsoleKey``` key, ```GameAction``` action)**
  
-    Binds a ```SpriteAction``` class to the specified key.
- 
-* **```void``` UnbindAction(```ConsoleKey``` key)**
+    Binds a ```GameAction``` or a ```SpriteAction```  class to the specified key.
 
-    Unbinds a ```SpriteAction``` class from the specified key.
+* **```void``` BindAction(```KeyValuePair<ConsoleKey, GameAction>``` action)**
+ 
+    Overload that allows for a ```KeyValuePair<ConsoleKey, GameAction>``` to passed instead.
+ 
+* **```KeyValuePair<ConsoleKey, GameAction>``` UnbindAction(```ConsoleKey``` key)**
+
+    Unbinds a ```GameAction``` or a ```SpriteAction``` class from the specified key and returns the binding.
  
 * **```void``` Listen()**
 
-    Listens for keyboard input and executes bound actions until ```exitKey``` is pressed.
+    Listens for keyboard input and executes bound actions until ```exitKey``` is pressed. Do not call this method on its own or your game may not work. ```CentralController.mainloop``` will do this for you when you call it.
  
 ---
 # **-- Logger.cs ---**
@@ -182,17 +246,6 @@ A simple convince class for basic logging.
 
 ---
  
-# **--- Mainloop.cs ---**
- 
-## **```static``` ```class``` Mainloop**
- 
-### **Methods**
-* **```static``` ```void``` mainloop(```Display``` displayObj, ```Input``` inputObj, ```SpriteController[]?``` spriteControllers = ```null```)**
- 
-    Initializes the main game loop. The game loop will end when the key defined by ```Input.exitKey``` is pressed.
- 
----
-
 # **--- Spawner.cs ---**
  
 ## **```class``` Spawner**
@@ -201,7 +254,7 @@ Responsible for spawning in sprites.
  
 ### **Constructors**
  
-* **Spawner(```Type``` spriteCls, ```object[]``` spriteAttr, ```Type``` spriteControllerCls, ```object?[]``` controllerAttr, ```Display``` display)**
+* **Spawner(```Type``` spriteCls, ```object[]``` spriteAttr, ```Type``` spriteControllerCls, ```object?[]``` controllerAttr, ```Display``` display, ```CentralController``` centralController)**
  
     **spriteCls**: The type of the ```Sprite``` class you want to spawn in (usually a ```Pawn```) using ```System.Reflection.typeof()```.
  
@@ -212,6 +265,8 @@ Responsible for spawning in sprites.
     **controllerAttr**: An ```object``` array containing the exact number and order of arguments to pass to the spriteControllerCls constructor (including default parameters). Pass ```null``` in place of the ```sprite``` argument since no sprite object exists yet.
  
     **display**: A reference to a ```Display``` object.
+
+    **centralController**: A reference to the game's ```CentralController``` object.
  
 ### **Methods**
 * **```System.Thread``` SpawnSprite(```int``` startx, ```int``` starty)**
@@ -315,7 +370,7 @@ Represents a sprite with the ability to move.
  
 ### **Constructors**
  
-* **Sprite(```string``` file, ```int``` startx, ```int``` starty, ```string``` spriteId, ```Display``` display, ```int``` stackOrder=0,  ```bool``` collisions=```true```)**
+* **Sprite(```string``` file, ```int``` startx, ```int``` starty, ```string``` spriteId, ```CentralController``` centralController, ```int``` stackOrder=0,  ```bool``` collisions=```true```)**
  
     **file**: A text file containing ascii art to convert into a sprite.
  
@@ -323,9 +378,11 @@ Represents a sprite with the ability to move.
  
     **starty**: The initial starting y-position of the sprite. NOTE: The sprite will not be center aligned, rather the *top-left* pixel of the sprite will snap to this position.
  
-    **display**: A reference to a ```Display``` object.
- 
     **spriteid**: A unique identifier for the sprite.
+
+    **centralController**: A reference to the game's ```CentralController``` object.
+
+    **stackOrder**: Controls in what order sprites will be drawn. Sprites with a higher stack order will appear on top of sprites with lower stack order.
  
     **collisions**: Pass ```true``` for collisions, ```false``` for no collisions.
  
@@ -360,13 +417,13 @@ Represents a sprite with the ability to move.
 # **--- SpriteController.cs ---**
 
 ## **```abstract``` ```class``` Controller**
-An basic controller template for controlling entities other than a single sprite (such as a group of sprites that you want to move as a single entity for example). If you only want to control a single sprite, you should use the ```SpriteController``` class instead.
+An basic controller template for controlling unique entities or if you need the sprite's behavior cycle to work a little differently. In most cases though ```SpriteController``` class should be used.
  
 ### **Constructors**
  
-* **Controller(```Display``` display, ```int``` speed)**
+* **Controller(```CentralController``` centralController, ```int``` speed)**
 
-    **display**: A ```Display``` object.
+    **centralController**: A reference to the game's ```CentralController``` object.
  
     **speed**: An integer representing how many milliseconds to delay the behavior cycle. Controls the speed at which the controlled sprite operates.
  
@@ -381,20 +438,71 @@ An basic controller template for controlling entities other than a single sprite
  
 * **```abstract``` ```void``` Initialize()**
  
-    Put code for initializing the object's behavior cycle here.
+    Put code for initializing the object's behavior cycle here. While it is ultimately up to you how this method runs I strongly recommend you use this template as a starting point:
 
+```
+bool despawn;
+while (true){
+    if (Stop){
+        try{
+            Thread.Sleep(Timeout.Infinite);
+        }
+        catch(ThreadInterruptedException){
+            continue;
+        }
+    }
+    try{
+        Thread.Sleep(_speed);
+    }
+    catch(ThreadInterruptedException){
+        /* 
+        This exception needs to be caught here or the game will 
+        crash if CentralController.ResumeAll() or ResumeController() is spammed. 
+        */
+    }  
+    
+    Behavior();
+    despawn = CheckDespawnConditions();
+    if (despawn){
+        // Put code for handing a despawn here
+        return;
+    }
+}
+```
 
+    
+NOTE: If you want this controller to be controllable from ```CentralController``` you will need to include this code snippet at the start fo your while loop:
+
+``` 
+if (Stop){
+    try{
+        Thread.Sleep(Timeout.Infinite);
+    }
+    catch(ThreadInterruptedException){
+        continue;
+    }
+}
+try{
+    Thread.Sleep(_speed);
+}
+catch(ThreadInterruptedException){
+    /* 
+    This exception needs to be caught here or the game will 
+    crash if CentralController.ResumeAll() or ResumeController() is spammed. 
+    */
+}
+```
  
 ## **```abstract``` ```class``` SpriteController: Controller**
-Independently controls a sprite using code contained in ```Behavior()``` and despawns the sprite when the conditions specified in ```CheckDespawnConditions()``` are met.
+Independently controls a sprite.
  
 ### **Constructors**
  
-* **SpriteController(```Pawn?``` sprite, ```Display``` display, ```int``` speed)**
+* **SpriteController(```Pawn?``` sprite, ```CentralController``` centralController, ```int``` speed)**
  
     **sprite**: A ```Pawn``` object to be controlled.
  
-    **display**: A ```Display``` object.
+    **centralController**: A reference to the game's ```CentralController``` object.
  
     **speed**: An integer representing how many milliseconds to delay the behavior cycle. Controls the speed at which the controlled sprite operates.
  
@@ -409,4 +517,4 @@ Independently controls a sprite using code contained in ```Behavior()``` and des
  
 * **```void``` Initialize()**
  
-    Initializes the behavior cycle. The speed of this cycle is determined by the ```speed``` attribute. The cycle first calls ```Behavior()```, then it calls ```CheckDespawnConditions()```. If ```CheckDespawnConditions()``` returns ```true```, the sprite will be despawned and the cycle will end.
+    Initializes the behavior cycle. The speed of this cycle is determined by the ```speed``` attribute.

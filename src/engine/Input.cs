@@ -28,10 +28,6 @@ namespace SimpleGameEngine{
             _bindings.Add(key, action);
         }
 
-        public void BindAction(ConsoleKey key, SpriteAction action){
-            _bindings.Add(key, action);
-        }
-
         public void BindAction(KeyValuePair<ConsoleKey, GameAction> action){
             _bindings.Add(action.Key, action.Value);
         }
@@ -39,9 +35,6 @@ namespace SimpleGameEngine{
         public KeyValuePair<ConsoleKey, GameAction> UnbindAction(ConsoleKey key){
             GameAction? oldAction; 
             bool result = _bindings.Remove(key, out oldAction);
-            // if (result == false){
-            //     return null;
-            // }
             return new KeyValuePair<ConsoleKey, GameAction>(key, oldAction);
         }
 

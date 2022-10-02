@@ -96,7 +96,7 @@ namespace spaceInvaders{
             input.BindAction(ConsoleKey.Spacebar, new ShootProjectile(ship, shipProjectileSpawner, 1));
             // input.BindAction(ConsoleKey.P, new Pause(mainController, input));
             
-            mainController.mainloop(screen, input, new Controller[] {masterEnemyController});
+            mainController.Mainloop(screen, input, new Controller[] {masterEnemyController});
         }
     }
 }
