@@ -51,34 +51,6 @@ namespace spaceInvaders{
         }
     }
 
-    class Pause: GameAction{
-        CentralController _controller;
-        Input _input;
-
-        bool _paused;
-
-        Logger logger;
-
-        public Pause(CentralController controller, Input input){
-            _controller = controller;
-            _input = input;
-            _paused = false;
-            logger = new Logger("Pause.log");
-        }
-
-        public override void ExecuteAction(){
-            if (_paused){
-                _controller.ResumeAll();
-                _paused = false;
-            }
-            else{
-                _controller.PauseAll();
-                _paused = true;
-            }
-            
-        }
-    }
-
     class EndGame: GameAction{
         CentralController con;
         public EndGame(CentralController controller){
