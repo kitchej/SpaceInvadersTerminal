@@ -1,12 +1,16 @@
 namespace SimpleGameEngine{
 
     abstract class Controller{
-        protected Display _display;
+        protected CentralController _controller;
         protected int _speed;
+        public string Id {get; set;}
 
-        public Controller(Display display, int speed){
-            _display = display;
+        public bool Stop {get; set;}
+
+        public Controller(CentralController centralController, int speed, string controllerId){
+            _controller = centralController;
             _speed = speed;
+            Id = controllerId;
         }
 
         protected abstract void Behavior();
@@ -21,7 +25,7 @@ namespace SimpleGameEngine{
 
         protected Pawn _sprite;
 
-        public SpriteController(Display display, int speed, Pawn sprite): base(display, speed){
+        public SpriteController(CentralController centralController, int speed, string controllerId, Pawn sprite): base(centralController, speed, controllerId){
             _sprite = sprite;
         }
 
@@ -31,11 +35,29 @@ namespace SimpleGameEngine{
                 throw new ArgumentNullException("\"sprite\" attribute cannot be null");
             }
             while (true){
-                Thread.Sleep(_speed);
+                if (Stop){
+                    try{
+                        Thread.Sleep(Timeout.Infinite);
+                    }
+                    catch(ThreadInterruptedException){
+                        continue;
+                    }
+                }
+                try{
+                    Thread.Sleep(_speed);
+                }
+                catch(ThreadInterruptedException){
+                    /* 
+                    This exception needs to be caught here or the game will 
+                    crash if CentralController.ResumeAll() or ResumeController() is spammed. 
+                    */
+                }  
+                
                 Behavior();
                 despawn = CheckDespawnConditions();
                 if (despawn){
-                    _display.DeleteSprite(_sprite);
+                    _controller.DeleteSprite(_sprite);
+                    _controller.RemoveController(Id);
                     return;
                 }
             }

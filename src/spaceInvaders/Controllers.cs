@@ -11,24 +11,30 @@ namespace spaceInvaders{
         Logger _logger;
         Pawn[,] _sprites;
         Pawn?[] _shooters;
+        Thread? _projectileThread;
+        int _enemyCount;
+        Input _input;
 
-        public MasterEnemyController(Display display, int speed, Spawner projectileSpawner): base(display, speed){
+        public MasterEnemyController(CentralController centralController, int speed, string controllerId, Spawner projectileSpawner, Input input): base(centralController, speed, controllerId){
             _projectileSpawner = projectileSpawner;
             _direction = "left";
             _count = 0;
             _passes = 0;
             _logger = new Logger("EnemyGroupLog.log");
+            _projectileThread = null;
             Pawn s;
             int x = 13;
             int startx = x;
-            int starty = 2;
+            int starty = 3;
             string[] shipTypes = {"alien1.txt", "alien2.txt", "alien3.txt"};
             _shooters = new Pawn[8];
             _sprites = new Pawn[3,8];
+            _input = input;
             for (int i=0;i<3;i++){
                 for(int j=0;j<8;j++){
-                    s = new Pawn(Path.Join(new[] {"src", "spaceInvaders", "sprites", shipTypes[i]}), startx: startx, starty: starty, spriteId: "EnemyShip_" + shipTypes[i], display: _display);
-                    _display.AddSprite(s);
+                    s = new Pawn(Path.Join(new[] {"src", "spaceInvaders", "sprites", shipTypes[i]}), startx: startx, starty: starty, spriteId: "EnemyShip_" + shipTypes[i], centralController: _controller);
+                    _enemyCount ++;
+                    _controller.AddSprite(s);
                     _sprites[i,j] = s;
                     startx += 5;
                     if (i==2){
@@ -60,6 +66,11 @@ namespace spaceInvaders{
             for(int i=2;i>=0;i--){
                 for(int j=0;j<8;j++){
                    _collisionInfo = _sprites[i,j].MoveSouth(distance);
+                   if (_collisionInfo.CollisionOccurred){
+                        if(_collisionInfo.Entity.SpriteId == "ship" || _collisionInfo.Entity.SpriteId == "southBounds"){
+                            EndGame(false);
+                        }
+                   }
                 }
             }
         }
@@ -74,6 +85,7 @@ namespace spaceInvaders{
                         return sprite;
                     }
                 }
+                
             }
             return null;
         }
@@ -81,7 +93,7 @@ namespace spaceInvaders{
         protected override void Behavior(){
             Pawn shooter;
             List<Pawn> shooterPool = new List<Pawn>();
-            Thread thread;
+            
             
             if (_direction == "left"){
                 MoveAllWest(1);
@@ -106,18 +118,31 @@ namespace spaceInvaders{
             if (_passes == 3){
                 MoveAllSouth(1);
                 _passes = 0;
+                if (_speed > 125){
+                    _speed -= 25;
+                }
             }
 
-            if (3 == 3){
+            if (_projectileThread == null){
                 foreach(Pawn? s in _shooters){
                     if (s != null){
                         shooterPool.Add(s);
                     }
                 }
-                shooter = shooterPool.ElementAt(rnd.Next(0, 7));
-                thread = _projectileSpawner.SpawnSprite(shooter.Coords[6].X, shooter.Coords[6].Y + 1);
-            }
 
+                shooter = shooterPool.ElementAt(rnd.Next(0, shooterPool.Count - 1));
+                
+                _projectileThread = _projectileSpawner.SpawnSprite(shooter.Coords[6].X, shooter.Coords[6].Y + 1); 
+            }
+            else if(!_projectileThread.IsAlive){
+                foreach(Pawn? s in _shooters){
+                    if (s != null){
+                        shooterPool.Add(s);
+                    }
+                }
+                shooter = shooterPool.ElementAt(rnd.Next(0, shooterPool.Count - 1));   
+                _projectileThread = _projectileSpawner.SpawnSprite(shooter.Coords[6].X, shooter.Coords[6].Y + 1);
+            }
         }
 
         void ChooseNewShooter(Pawn despawn){
@@ -136,14 +161,53 @@ namespace spaceInvaders{
             }
         }
 
+        void EndGame(bool win){
+            _input.UnbindAction(ConsoleKey.A);
+            _input.UnbindAction(ConsoleKey.D);
+            _input.UnbindAction(ConsoleKey.Spacebar);
+            _controller.PauseAll();
+            _controller.DeleteAllSprites();
+            if (win){
+                _controller.AddSprite(new Sprite(Path.Join(new[] {"src", "spaceInvaders", "sprites", "win.txt"}), 5, 5, "Win"));
+            }
+            else{
+                _controller.AddSprite(new Sprite(Path.Join(new[] {"src", "spaceInvaders", "sprites", "gameOver.txt"}), 5, 5, "GameOver"));
+            }
+            
+        }
+
         public override void Initialize(){
             Pawn? despawn;
             while (true){
-                Thread.Sleep(_speed);
+                // THIS TRY BLOCK NEEDS TO BE FIRST!
+                // I DON'T KNOW WHY, BUT IF I MOVE IT THE GAME WILL NOT PAUSE PROPERLY
+                try{
+                    Thread.Sleep(_speed);
+                }
+                catch(ThreadInterruptedException){
+                    /* 
+                    This exception needs to be caught here or the game will 
+                    crash if CentralController.ResumeAll() or ResumeController() is spammed. 
+                    */
+                }
+                
+                if (Stop){
+                    try{
+                        Thread.Sleep(Timeout.Infinite);
+                    }
+                    catch(ThreadInterruptedException){
+                        continue;
+                    }
+                }
+                
                 Behavior();
                 despawn = CheckDespawn();
                 if (despawn != null){
-                    _display.DeleteSprite(despawn);
+                    _controller.DeleteSprite(despawn);
+                    _enemyCount --;
+                    if (_enemyCount == 0){
+                        EndGame(true);
+                    }
                     despawn.IsDespawned = true;
                     ChooseNewShooter(despawn);
                 }
@@ -154,7 +218,10 @@ namespace spaceInvaders{
 
     class ProjectileController: SpriteController{
         CollisionInfo collisionInfo;
-        public ProjectileController(Pawn? sprite, Display display, int speed): base(display, speed, sprite){}
+        Logger logger;
+        public ProjectileController(Pawn? sprite, CentralController centralController, string controllerId, int speed): base(centralController, speed, controllerId, sprite){
+            logger = new Logger("Projectile.log");
+        }
 
         protected override void Behavior(){
            collisionInfo = _sprite.MoveNorth(1);
@@ -166,11 +233,6 @@ namespace spaceInvaders{
                 collisionInfo.Entity.CollisionInfo = new CollisionInfo(true, _sprite);
                 return true;
             }
-            if(_sprite.LastCollided.CollisionOccurred){
-                if(_sprite.LastCollided.Entity.SpriteId.Contains("EnemyShip")){
-                    return true;
-                }
-            }
             return false;
         }
 
@@ -178,11 +240,13 @@ namespace spaceInvaders{
 
     class EnemyProjectileController: SpriteController{
         CollisionInfo collisionInfo;
-        Input _input;
-        Logger _log;
-        public EnemyProjectileController(Pawn? sprite, Input input, Display display, int speed): base(display, speed, sprite){
-            _input = input;
-            _log = new Logger("EnemyProjectileController.log");
+        CentralController _centralController;
+        Logger _logger;
+        Reset resetAction;
+        public EnemyProjectileController(Pawn? sprite, CentralController centralController, string controllerId, int speed, Reset action): base(centralController, speed, controllerId, sprite){
+            _centralController = centralController;
+            _logger = new Logger("EnemyProjectile.log");
+            resetAction = action;
         }
 
         protected override void Behavior(){
@@ -192,74 +256,13 @@ namespace spaceInvaders{
         protected override bool CheckDespawnConditions()
         {
             if (collisionInfo.CollisionOccurred){
-                _log.Log($"{collisionInfo.Entity.SpriteId}");
                 if (collisionInfo.Entity.SpriteId == "ship"){
-                    _input.KillGame();
+                    resetAction.ExecuteAction();
                     return true;
                 }
                 return true;
             }
             return false;
         }
-
-    }
-
-    class ShipHitDetector: Controller{
-
-        Input _input;
-        CollisionInfo? _collisionInfo;
-        Pawn _sprite;
-
-        public ShipHitDetector(Pawn sprite, Input input, Display display, int speed): base(display, speed){
-            _collisionInfo = null;
-            _sprite = sprite;
-            _input = input;
-        }
-
-        protected override void Behavior(){}
-        protected override bool CheckDespawnConditions(){
-            if (_sprite.LastCollided.CollisionOccurred){
-                if (_sprite.LastCollided.Entity.SpriteId == "enemyProjectile"){
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public override void Initialize(){
-            bool gameOver;
-            while(true){
-                //Thread.Sleep(_speed);
-                gameOver = CheckDespawnConditions();
-                if (gameOver){
-                    _input.KillGame();
-                    break;
-                }
-            }
-        }
-    }
-
-    class ThreadController{
-        Thread[] _threads;
-        Thread _inputThread;
-
-        public ThreadController(Thread[] threads, Thread inputThread){
-            _threads = threads;
-            _inputThread = inputThread;
-        }
-
-        public void PauseAll(){
-
-        }
-
-        public void PauseGame(){
-            foreach(Thread thread in _threads){
-                if (thread == _inputThread){
-                    thread.Join();
-                }
-            }
-        }
-
-
     }
 }
