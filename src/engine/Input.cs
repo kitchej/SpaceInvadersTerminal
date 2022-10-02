@@ -18,12 +18,10 @@ namespace SimpleGameEngine{
         ConsoleKey _readKey;
         GameAction? _actionToExecute;
         Dictionary<ConsoleKey, GameAction> _bindings;
-        public bool Kill{get; set;}
 
         public Input(){
             _actionToExecute = null;
             _bindings = new Dictionary<ConsoleKey, GameAction>();
-            Kill = false;
         }
 
         public void BindAction(ConsoleKey key, GameAction action){
@@ -34,16 +32,21 @@ namespace SimpleGameEngine{
             _bindings.Add(key, action);
         }
 
-        public void UnbindAction(ConsoleKey key){
-            _bindings.Remove(key);
+        public void BindAction(KeyValuePair<ConsoleKey, GameAction> action){
+            _bindings.Add(action.Key, action.Value);
+        }
+
+        public KeyValuePair<ConsoleKey, GameAction> UnbindAction(ConsoleKey key){
+            GameAction? oldAction; 
+            bool result = _bindings.Remove(key, out oldAction);
+            // if (result == false){
+            //     return null;
+            // }
+            return new KeyValuePair<ConsoleKey, GameAction>(key, oldAction);
         }
 
         public void Listen(){
             while (true){
-                if (Kill){
-                    Console.CursorVisible = true;
-                    break;
-                }
                 _readKey = Console.ReadKey(intercept: true).Key;
                 try{
                     _bindings.TryGetValue(_readKey, out _actionToExecute);

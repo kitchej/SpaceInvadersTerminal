@@ -29,6 +29,8 @@ namespace SimpleGameEngine{
             logger = new Logger("CentralController.log");
         }
 
+
+
         public void AddSprite(Sprite sprite){
             lock (Sprites){
                 Sprites.Add(sprite); 
@@ -41,6 +43,10 @@ namespace SimpleGameEngine{
                 Sprites.Remove(sprite);
                 Sprites.Sort(Sprite.CompareByStackOrder);
             }
+        }
+
+        public void DeleteAllSprites(){
+            Sprites.Clear();
         }
 
         public bool AddController(Controller controller, Thread thread){
@@ -108,7 +114,7 @@ namespace SimpleGameEngine{
         }
 
         public void EndGame(){
-            _input.Kill = true;
+            Environment.Exit(0);
         }
 
         public void mainloop(Display displayObj, Input inputObj, Controller[]? spriteControllers = null){
