@@ -156,7 +156,7 @@ Represents the main display of the game. There should only ever be one Display o
  
 * **```void``` DrawSprite(```Sprite``` sprite)**
  
-    Draws a single ```Sprite``` object to the screen. This does not add the sprite to the ```Display.Sprites``` list.
+    Draws a single ```Sprite``` object to the screen. This does not add the sprite to the ```CentralController.Sprites``` list.
 
 * **```void``` ClearDisplay()**
 
