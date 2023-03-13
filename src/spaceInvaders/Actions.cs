@@ -83,7 +83,7 @@ namespace spaceInvaders{
                 _input.UnbindAction(ConsoleKey.Spacebar);
                 _con.PauseAll();
                 _con.DeleteAllSprites();
-                _con.AddSprite(new Sprite(Path.Join(new[] {"src", "spaceInvaders", "sprites", "gameOver.txt"}), 5, 5, "GameOver"));
+                _con.AddSprite(new Sprite(Path.Join(new[] {"sprites", "gameOver.txt"}), 5, 5, "GameOver"));
             }
             else{
                 

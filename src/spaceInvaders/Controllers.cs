@@ -32,7 +32,7 @@ namespace spaceInvaders{
             _input = input;
             for (int i=0;i<3;i++){
                 for(int j=0;j<8;j++){
-                    s = new Pawn(Path.Join(new[] {"src", "spaceInvaders", "sprites", shipTypes[i]}), startx: startx, starty: starty, spriteId: "EnemyShip_" + shipTypes[i], centralController: _controller);
+                    s = new Pawn(Path.Join(new[] {"sprites", shipTypes[i]}), startx: startx, starty: starty, spriteId: "EnemyShip_" + shipTypes[i], centralController: _controller);
                     _enemyCount ++;
                     _controller.AddSprite(s);
                     _sprites[i,j] = s;
@@ -168,10 +168,10 @@ namespace spaceInvaders{
             _controller.PauseAll();
             _controller.DeleteAllSprites();
             if (win){
-                _controller.AddSprite(new Sprite(Path.Join(new[] {"src", "spaceInvaders", "sprites", "win.txt"}), 5, 5, "Win"));
+                _controller.AddSprite(new Sprite(Path.Join(new[] {"sprites", "win.txt"}), 5, 5, "Win"));
             }
             else{
-                _controller.AddSprite(new Sprite(Path.Join(new[] {"src", "spaceInvaders", "sprites", "gameOver.txt"}), 5, 5, "GameOver"));
+                _controller.AddSprite(new Sprite(Path.Join(new[] {"sprites", "gameOver.txt"}), 5, 5, "GameOver"));
             }
             
         }

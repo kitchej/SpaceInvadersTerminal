@@ -47,31 +47,30 @@ namespace spaceInvaders{
             Input input = new Input();
 
             // Intro Screen
-
-            screen.DrawSprite(new Sprite(Path.Join(new[] {"src", "spaceInvaders", "sprites", "introGraphic.txt"}), 5, 5, "Header"));
+            screen.DrawSprite(new Sprite(Path.Join(new[] {"sprites", "introGraphic.txt"}), 5, 5, "Header"));
             screen.Show();
             Console.ReadKey();
 
             // Game Init
-            Pawn ship = new Pawn(Path.Join(new[] {"src", "spaceInvaders", "sprites", "ship.txt"}), startx: 30, starty: 36, spriteId: "ship", centralController: mainController, stackOrder: 0);
+            Pawn ship = new Pawn(Path.Join(new[] {"sprites", "ship.txt"}), startx: 30, starty: 36, spriteId: "ship", centralController: mainController, stackOrder: 0);
             Spawner shipProjectileSpawner = new Spawner(typeof(Pawn), 
-                                                        new object[] { Path.Join(new[] {"src", "spaceInvaders", "sprites", "projectile.txt"}), 30, 21, "projectile", mainController, 0, true}, 
+                                                        new object[] { Path.Join(new[] {"sprites", "projectile.txt"}), 30, 21, "projectile", mainController, 0, true}, 
                                                         typeof(ProjectileController), 
                                                         new object?[] {null, mainController, "ProjectileCon", 40}, 
                                                         mainController);
 
-            Sprite livesLabel = new Sprite(Path.Join(new[] {"src", "spaceInvaders", "sprites", "livesLabel.txt"}), startx: 1, starty: 1, spriteId: "livesLabel");
-            Sprite life1 = new Sprite(Path.Join(new[] {"src", "spaceInvaders", "sprites", "life.txt"}), startx: 7, starty: 1, spriteId: "life1", collisions: false);
-            Sprite life2 = new Sprite(Path.Join(new[] {"src", "spaceInvaders", "sprites", "life.txt"}), startx: 8, starty: 1, spriteId: "life2", collisions: false);
+            Sprite livesLabel = new Sprite(Path.Join(new[] {"sprites", "livesLabel.txt"}), startx: 1, starty: 1, spriteId: "livesLabel");
+            Sprite life1 = new Sprite(Path.Join(new[] {"sprites", "life.txt"}), startx: 7, starty: 1, spriteId: "life1", collisions: false);
+            Sprite life2 = new Sprite(Path.Join(new[] {"sprites", "life.txt"}), startx: 8, starty: 1, spriteId: "life2", collisions: false);
             Reset resetAction = new Reset(mainController, new Stack<Sprite>(new Sprite[]{life1, life2}), ship, input);
 
-            Sprite northBounds = new Sprite(Path.Join(new[] {"src", "spaceInvaders", "sprites", "horizBorder.txt"}), 1, 0, "northBounds");
-            Sprite southBounds = new Sprite(Path.Join(new[] {"src", "spaceInvaders", "sprites", "horizBorder.txt"}), 1, 39, "southBounds");
-            Sprite westBounds = new Sprite(Path.Join(new[] {"src", "spaceInvaders", "sprites", "vertiBorder.txt"}), 0, 1, "westBounds");
-            Sprite eastBounds = new Sprite(Path.Join(new[] {"src", "spaceInvaders", "sprites", "vertiBorder.txt"}), 59, 1, "eastBounds");
+            Sprite northBounds = new Sprite(Path.Join(new[] {"sprites", "horizBorder.txt"}), 1, 0, "northBounds");
+            Sprite southBounds = new Sprite(Path.Join(new[] {"sprites", "horizBorder.txt"}), 1, 39, "southBounds");
+            Sprite westBounds = new Sprite(Path.Join(new[] {"sprites", "vertiBorder.txt"}), 0, 1, "westBounds");
+            Sprite eastBounds = new Sprite(Path.Join(new[] {"sprites", "vertiBorder.txt"}), 59, 1, "eastBounds");
 
             MasterEnemyController masterEnemyController = new MasterEnemyController(mainController, 500, "MasterEnemyCon", new Spawner(typeof(Pawn), 
-                                                                                                                        new object[] { Path.Join(new[] {"src", "spaceInvaders", "sprites", "projectile.txt"}), 30, 21, "enemyProjectile", mainController, 0, true}, 
+                                                                                                                        new object[] { Path.Join(new[] {"sprites", "projectile.txt"}), 30, 21, "enemyProjectile", mainController, 0, true}, 
                                                                                                                         typeof(EnemyProjectileController), 
                                                                                                                         new object?[] {null, mainController, "EnemyProjectileCon", 40, resetAction}, 
                                                                                                                         mainController),
