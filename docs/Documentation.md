@@ -132,19 +132,11 @@ A central controller for the game. Contains methods for starting the mainloop, a
 
 ## **```class``` Display**
  
-Represents the main display of the game. There should only ever be one Display object per game. Sprites will be drawn to the screen automatically, provided ```Refresh()``` has been called. Though individual characters and Sprite objects can be drawn to the screen with ```Draw()```, ```DrawSprite()```, and displayed with ```Show()```, these changes will not show up in during the main game loop. These are methods used internally by ```Refresh()``` but made public due to their usefulness for visualizing sprite positions on the screen for debuging.
+Represents the main display of the game. There should only ever be one Display object per game. Sprites will be drawn to the screen automatically, provided ```Refresh()``` has been called. Though individual characters and Sprite objects can be drawn to the screen with ```Draw()```, ```DrawSprite()```, and displayed with ```ShowBuffer()```, these changes will not show up in during the main game loop. These are methods used internally by ```Refresh()``` but made public due to their usefulness for visualizing sprite positions on the screen for debuging.
  
 ### **Constructors**
  
  * **Display(```CentralController``` CentralController, ```int``` rowCount, ```int``` columnCount, ```char``` background=' ')**
-
-    **centralController**: A reference to the game's ```CentralController``` object.
- 
-    **rowCount**: The number of rows the display will have
- 
-    **columnCount**: The number of columns the display will have
- 
-    **background**: The background character of the display. The default is a space.
  
  
 ### **Methods**
@@ -158,11 +150,11 @@ Represents the main display of the game. There should only ever be one Display o
  
     Draws a single ```Sprite``` object to the screen. This does not add the sprite to the ```CentralController.Sprites``` list.
 
-* **```void``` ClearDisplay()**
+* **```void``` ClearBuffer()**
 
     Clears the internal display buffer.
  
-* **```void``` Show()**
+* **```void``` ShowBuffer()**
  
     Shows whatever is currently in the internal display buffer.
  
@@ -215,13 +207,13 @@ Listens for user input from the keyboard and executes actions defined by a ```Sp
  
     Binds a ```GameAction``` or a ```SpriteAction```  class to the specified key.
 
-* **```void``` BindAction(```KeyValuePair<ConsoleKey, GameAction>``` action)**
+* **```void``` BindAction(```KeyValuePair<ConsoleKey, GameAction>?``` action)**
  
     Overload that allows for a ```KeyValuePair<ConsoleKey, GameAction>``` to passed instead.
  
-* **```KeyValuePair<ConsoleKey, GameAction>``` UnbindAction(```ConsoleKey``` key)**
+* **```KeyValuePair<ConsoleKey, GameAction>?``` UnbindAction(```ConsoleKey``` key)**
 
-    Unbinds a ```GameAction``` or a ```SpriteAction``` class from the specified key and returns the binding.
+    Unbinds a ```GameAction``` or a ```SpriteAction``` class from the specified key and returns the binding. Returns ```null``` if the binding does not exist.
  
 * **```void``` Listen()**
 

@@ -27,8 +27,6 @@ namespace SimpleGameEngine{
             logger = new Logger("CentralController.log");
         }
 
-
-
         public void AddSprite(Sprite sprite){
             lock (Sprites){
                 Sprites.Add(sprite); 

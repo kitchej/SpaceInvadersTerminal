@@ -28,13 +28,19 @@ namespace SimpleGameEngine{
             _bindings.Add(key, action);
         }
 
-        public void BindAction(KeyValuePair<ConsoleKey, GameAction> action){
-            _bindings.Add(action.Key, action.Value);
+        public void BindAction(KeyValuePair<ConsoleKey, GameAction>? action){
+            if (action.HasValue){
+                 _bindings.Add(action.Value.Key, action.Value.Value);
+            }
+           
         }
 
-        public KeyValuePair<ConsoleKey, GameAction> UnbindAction(ConsoleKey key){
+        public KeyValuePair<ConsoleKey, GameAction>? UnbindAction(ConsoleKey key){
             GameAction? oldAction; 
             bool result = _bindings.Remove(key, out oldAction);
+            if (oldAction == null){
+                return null;
+            }
             return new KeyValuePair<ConsoleKey, GameAction>(key, oldAction);
         }
 
@@ -56,6 +62,5 @@ namespace SimpleGameEngine{
                 
             }
         }
-
     }
 }

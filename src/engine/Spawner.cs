@@ -13,14 +13,14 @@ namespace SimpleGameEngine{
         Type _spriteCls;
         object[] _spriteAttr;
         Type _spriteControllerCls;
-        object?[] _spriteControllerAttr;
+        object[] _spriteControllerAttr;
         ConstructorInfo? _spriteConstructor;
         ConstructorInfo? _spriteControllerConstructor;
 
         Random _numGen;
 
         // For spriteAttr & controllerAttr: You need to include ALL parameters of the target constructor, even default parameters
-        public Spawner(Type spriteCls, object[] spriteAttr, Type spriteControllerCls, object?[] controllerAttr, CentralController centralController){
+        public Spawner(Type spriteCls, object[] spriteAttr, Type spriteControllerCls, object[] controllerAttr, CentralController centralController){
             _controller = centralController;
             _spriteCls = spriteCls;
             _spriteAttr = spriteAttr;

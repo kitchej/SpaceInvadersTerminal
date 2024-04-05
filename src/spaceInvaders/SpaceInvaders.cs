@@ -5,11 +5,6 @@ namespace spaceInvaders{
     
     static class Program{
 
-        
-        
-
-            
-
         static void Main(){
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)){
@@ -48,7 +43,7 @@ namespace spaceInvaders{
 
             // Intro Screen
             screen.DrawSprite(new Sprite(Path.Join(new[] {"sprites", "introGraphic.txt"}), 5, 5, "Header"));
-            screen.Show();
+            screen.ShowBuffer();
             Console.ReadKey();
 
             // Game Init

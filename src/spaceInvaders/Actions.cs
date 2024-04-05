@@ -89,9 +89,9 @@ namespace spaceInvaders{
                 
                 // Pause game
                 _con.PauseAll();
-                KeyValuePair<ConsoleKey, GameAction> moveLeft;
-                KeyValuePair<ConsoleKey, GameAction> moveRight;
-                KeyValuePair<ConsoleKey, GameAction> shoot;
+                KeyValuePair<ConsoleKey, GameAction>? moveLeft;
+                KeyValuePair<ConsoleKey, GameAction>? moveRight;
+                KeyValuePair<ConsoleKey, GameAction>? shoot;
                 // Unbind movement and shooting
                 moveLeft = _input.UnbindAction(ConsoleKey.A);
                 moveRight = _input.UnbindAction(ConsoleKey.D);

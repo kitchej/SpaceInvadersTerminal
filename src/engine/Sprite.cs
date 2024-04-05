@@ -27,8 +27,8 @@ namespace SimpleGameEngine{
         public CollisionInfo CollisionInfo {get; set;}
         public List<Pixel> Coords {get;}
         public string SpriteId {get;}
-        public bool HasCollisions {get; set;} // This may need to be locked if edited from other threads
-        public int StackOrder {get; set;} // This may need to be locked if edited from other threads
+        public bool HasCollisions {get; set;} // This will need to be locked if edited from other threads
+        public int StackOrder {get; set;} // This will need to be locked if edited from other threads
         public CollisionInfo LastCollided {get; set;}
         public bool IsDespawned {get;set;}
 

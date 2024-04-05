@@ -4,7 +4,7 @@ namespace SimpleGameEngine{
         CentralController _controller;
         int _rowCount;
         int _columnCount;
-        char[,] _screen;
+        char[,] _buffer;
         char _background;
 
         public Display(CentralController CentralController, int rowCount, int columnCount, char background=' '){
@@ -12,10 +12,10 @@ namespace SimpleGameEngine{
             _rowCount = rowCount;
             _columnCount = columnCount;
             _background = background;
-            _screen = new char[_rowCount, _columnCount];
+            _buffer = new char[_rowCount, _columnCount];
             for (int i=0;i<_rowCount;i++){
                 for (int j=0;j<_columnCount;j++){
-                    _screen[i,j] = _background;
+                    _buffer[i,j] = _background;
                 }
             }
         }
@@ -40,7 +40,7 @@ namespace SimpleGameEngine{
             if (x < 0 || x >= _columnCount){
                 throw new IndexOutOfRangeException("x value is out of bounds");
             }
-            _screen[y, x] = character;
+            _buffer[y, x] = character;
         }
 
         public void DrawSprite(Sprite sprite){
@@ -52,19 +52,19 @@ namespace SimpleGameEngine{
             
         }
         
-        public void ClearDisplay(){
+        public void ClearBuffer(){
             for (int i=0;i<_rowCount;i++){
                 for (int j=0;j<_columnCount;j++){
-                    _screen[i,j] = _background;
+                    _buffer[i,j] = _background;
                 }
             }
         }
 
-        public void Show(){
+        public void ShowBuffer(){
             Console.Clear();
             for (int i=0;i<_rowCount;i++){
                 for (int j=0;j<_columnCount;j++){
-                    Console.Write(_screen[i,j]);
+                    Console.Write(_buffer[i,j]);
                 }
                 Console.Write('\n');
             }
@@ -74,17 +74,16 @@ namespace SimpleGameEngine{
             Console.Clear();
             Console.CursorVisible = false;
             while (true){
-                ClearDisplay();
+                ClearBuffer();
                 RefreshSprites();
                 Console.SetCursorPosition(0, 0);
                 for (int i=0;i<_rowCount;i++){
                     for (int j=0;j<_columnCount;j++){
-                        Console.Write(_screen[i,j]);
+                        Console.Write(_buffer[i,j]);
                     }
                     Console.Write('\n');
                 }
             }
         }
-
     }
 }
