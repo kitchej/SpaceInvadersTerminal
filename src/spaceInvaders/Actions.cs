@@ -36,7 +36,7 @@ namespace spaceInvaders{
     class ShootProjectile: SpriteAction{
         Spawner _spawner;
         int _limit;
-
+        
         Thread? _thread;
         public ShootProjectile(Pawn sprite, Spawner spawner, int limit): base(sprite){
             _spawner = spawner;
@@ -46,6 +46,7 @@ namespace spaceInvaders{
         public override void ExecuteAction(){
             if (_thread == null || !_thread.IsAlive){
                 _thread = _spawner.SpawnSprite(Sprite.Coords[0].X, Sprite.Coords[0].Y - 1);
+
             }
             
         }
