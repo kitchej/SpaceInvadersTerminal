@@ -218,10 +218,9 @@ namespace spaceInvaders{
 
     class ProjectileController: SpriteController{
         CollisionInfo collisionInfo;
-        Logger logger;
         public ProjectileController(Pawn? sprite, CentralController centralController, string controllerId, int speed): base(centralController, speed, controllerId, sprite){
-            logger = new Logger("Projectile.log");
         }
+
 
         protected override void Behavior(){
            collisionInfo = _sprite.MoveNorth(1);

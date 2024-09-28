@@ -1,14 +1,16 @@
 namespace SimpleGameEngine{
 
-    struct Pixel{
+    class Pixel{
         public int X;
         public int Y;
         public char Character;
+        public bool HasCollisions;
 
-        public Pixel(int x, int y, char character){
+        public Pixel(int x, int y, char character, bool hasCollisions = false){
             X = x;
             Y = y;
             Character = character;
+            HasCollisions = hasCollisions;
         }
     }
 
@@ -29,7 +31,7 @@ namespace SimpleGameEngine{
         public string SpriteId {get;}
         public bool HasCollisions {get; set;} // This will need to be locked if edited from other threads
         public int StackOrder {get; set;} // This will need to be locked if edited from other threads
-        public CollisionInfo LastCollided {get; set;}
+        public CollisionInfo LastCollided {get; set;} 
         public bool IsDespawned {get;set;}
 
         public Sprite(string file, int startx, int starty, string spriteId, int stackOrder=0, bool collisions=true){
@@ -56,6 +58,31 @@ namespace SimpleGameEngine{
                     x ++;
                 }
                 starty ++;
+            }
+            if (collisions){
+                int adjacent_pixels;
+                foreach (Pixel coord in Coords){
+                    List<Pixel> others = new List<Pixel>(Coords);
+                    others.Remove(coord);
+                    adjacent_pixels = 0;
+                    foreach (Pixel other in others){
+                       if (other.X == coord.X && other.Y == coord.Y - 1){
+                            adjacent_pixels ++;
+                       }
+                       if (other.X == coord.X && other.Y == coord.Y + 1){
+                            adjacent_pixels ++;
+                       }
+                       if (other.X + 1 == coord.X && other.Y == coord.Y){
+                            adjacent_pixels ++;
+                       }
+                       if (other.X - 1 == coord.X && other.Y == coord.Y){
+                            adjacent_pixels ++;
+                       }
+                    }
+                    if (adjacent_pixels != 4){
+                        coord.HasCollisions = true;
+                    }
+                }  
             }
         }
 
@@ -114,6 +141,7 @@ namespace SimpleGameEngine{
     class Pawn: Sprite{
         CentralController _controller;
 
+        
         public Pawn(string file, int startx, int starty, string spriteId, CentralController centralController, int stackOrder=0, bool collisions=true): 
         base(file, startx, starty, spriteId, stackOrder, collisions){
             _controller = centralController;
@@ -136,7 +164,13 @@ namespace SimpleGameEngine{
                     }
                     lock(sprite.Coords){
                         foreach (var otherCoord in sprite.Coords){
+                            if (!otherCoord.HasCollisions){
+                                continue;
+                            }
                             foreach(var coord in Coords){
+                            if (!coord.HasCollisions){
+                                continue;
+                            }
                                 if (otherCoord.X == coord.X && otherCoord.Y == coord.Y){
                                     output.CollisionOccurred = true;
                                     output.Entity = sprite;
